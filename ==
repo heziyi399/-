@@ -1,0 +1,4282 @@
+---
+
+
+---
+
+# 木棒三角形
+
+# （枚举）
+
+```c++
+#include <iostream>
+#include<stdlib.h>
+using namespace std;
+int main()//木棒三角形 有n根木棍 挑出其中三根构成直角三角形 输出面积最大的三角形面积 输入n再输入每根三角形长度,n<100
+{
+	int n;//输入n根木棍 再分别输入每根木棍的长度 限制了n数量小于100
+	int len[110];//每个数组元素储存木棍长度 且要求长度由小到大给出
+	while (scanf("%d", &n) != EOF) 
+	{
+		for (int i = 0; i < n; i++)
+			cin >> len[i];
+		double ans = -1;
+		for (int i = 0; i < n ; i++)//枚举最短木棍
+			for (int j = i + 1; j < n ; j++)
+				for (int z = j + 1; j < n ; j++)
+				{
+					if(len[i]*len[i] + len[j]*len[j]==len[z]*len[z])
+					{
+						if ((len[i] * len[i] + len[j] * len[j] + len[z] * len[z]) > ans)
+							ans = 0.5 * len[i] * len[j];
+					}
+				}
+		if (ans == -1)
+			cout << "no !";
+		else
+			cout << ans;
+	}
+}
+```
+
+# 顺序查找
+
+```c++
+/顺序查找 从第一个开始查找 关键字与给定值相比较 如果相等则退出
+	int order(int array[], int n, int key)
+	{
+		int i;
+		array[n] = key;//监视哨
+		for (i = 0; array[i] != key; i++);//分号不可少
+		return (i < n ? i : -1);
+	}
+```
+
+# 希尔排序
+
+```c++
+struct node {
+	int key;//简化
+}a[20];
+int n;//全局变量 排序的数字数目
+void print()
+{
+	for (int i = 0; i < n; i++)
+		cout << a[i].key << " ";
+}
+void create()
+{
+	int i; n = 0;
+	cout << "input keys:";
+	cin >> i;
+	while (i != -999)
+	{
+		cin >> i;
+		a[n].key = i; n++;
+	}
+}
+
+void shell(node a[], int n)
+{
+	int k = n / 2;
+	for (int i = n; i >=1; i--)
+		a[i].key = a[i-1].key;
+	while (k>=1)
+	{
+		for (int i = k + 1; i <= n; i++)
+		{
+			a[0].key = a[i].key; int j = i - k;
+			
+				while(a[j].key>a[0].key&&(j>=0))
+				{
+					a[j + k].key = a[j].key; j -= k;
+				}
+				a[j + k] = a[0];
+			
+		}
+		k /= 2;
+	}
+	for (int i = 0; i <= n; i++)
+		a[i].key = a[i + 1].key;
+	cout << endl;
+	}
+
+
+
+
+int main()
+{
+	create(); print();
+		shell(a,n); print();
+}
+```
+
+
+
+# 折半查找
+
+也叫二分查找 可以在最坏的情况下用O(logn)完成任务
+
+```c++
+int binarysearch(int array[], int key, int n)
+{
+	int left = 0;
+	int right = n - 1;
+	while (left <= right)
+	{
+		int middle = (left + right) / 2;
+		if (array[middle] == key)
+			return middle;
+		if (left > array[middle])
+			left = middle + 1;
+		if (right < array[middle])
+			right = middle - 1;
+	}
+	return -1;
+}
+```
+
+# /字符串统计
+
+## 每组测试输出两个正整数 第一个是表示重复的次数，第二次是在该重复次数下有几种不同的字符串
+
+```c++
+using namespace std;
+struct abc
+{
+	 char str[20];
+	///int num;
+}que[20000];
+int cmp(const void* a, const void* b)
+{
+	abc* f1 = (abc*)a;
+	abc* f2 = (abc*)b;
+	return strcmp(f1->str, f2->str);//排序函数用于在qsort函数中将字符串从小到大排序 可以根据cmp的写法来确定从大到小还是从小到大
+}
+//qsort函数的基本用法：qsort(que,n,sizeof(que[0]),cmp)que为需要排序的序列首地址
+//n为序列的元素 sizeof为序列中单个元素所占空间的大小 cmp为排序过程中用到的比较函数 有-1、0、1三种返回值
+int main()
+{
+	int count[20000];//存放种类数 其中[]中的数值是重复的次数
+	int n;
+	int number = 1;
+	while (cin >> n)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			cin >>que[i].str;
+			
+			count[i] = 0;
+		}
+
+
+		qsort(que, n, sizeof(que[0]), cmp);
+		////如果后一个元素等于前一个元素则出现次数加一
+		int i = 1;
+		//while(i < n)
+		for (int i = 0; i < n - 1; i++)
+		{
+			if (strcmp(que[i].str, que[i+1].str) == 0)//比较两个字符串是否相等 不要用==
+			{
+				number++;
+		
+				continue;
+			}
+			
+				count[number]++;//如果不相等了 再加上最后这一位本身
+				number = 1;
+			
+			//恢复number
+		}
+		count[number]++;//
+		for (int i = 1; i < n; i++)
+		{
+			cout << i << " :" << count[i] << "";
+			cout << endl;
+		}
+	}
+	
+}
+```
+
+# 
+
+# 递归:
+
+```c++
+//求解组合问题 1~n中任取r个数 求所有组合
+//输出一个组合
+int r;//全局变量
+void display(int a[])
+{
+	for (int i = 0; i < r; i++)
+		cout << a[i]<<" ";
+	cout << endl;
+}
+void mm(int a[], int n, int r)
+{
+
+	for (int i = n; i >= r; i--)
+	{
+		a[r - 1] = i;
+		if (r > 1)
+			mm(a, i - 1, r - 1);
+		else
+			display(a);
+	}
+}
+		
+
+
+
+
+int main() {
+
+	int n;
+	int a[8];
+	
+	cin >> n >> r;
+	mm(a, n, r);
+
+}
+```
+
+## 1.n皇后问题
+
+```
+using namespace std;
+//n皇后问题
+//每个皇后不能同行不能同列且不能同对角线
+const int N = 20;//最多的皇后数
+int q[N];//存放皇后的列好 i是行数q[i]是列数即第i个皇后所在的列号place(k,n)是指【已经在1~k-1行上
+//放好了k-1个皇后，现要在k~n上放n-k+1个皇后，则place（k+1,n）指已经在1~k行上放了k个皇后，要在k+1~n行
+//放n-k个皇后 即place(k+1,n)比place(k,n)少放一个皇后，前者是小问题，后者是大问题
+//当同对角线时 即等腰直角三角形 行的绝对值之差=列的绝对值之差
+//本代码i从1开始取，最大下标是n
+int ccount = 0;//解的个数
+void display(int n)
+{
+	ccount++;
+	cout << "第" << ccount << "个解：";
+	for (int i = 1; i <= n; i++)
+		cout << i << " " << q[i]<<".";
+	cout << endl;
+
+}
+//已经放好了k-1个皇后 考虑第k个皇后 它只能放第k行 j是传进来的值
+bool iff(int k, int j)//判断（k,j)能否放皇后  已经放好的皇后是（i,q[i]) i为1~k-1
+{
+	int i = 1;
+	while (i < k)//前面k-1行已经放了皇后
+	{
+		if (q[i] == j ||fabs(j - q[i]) == fabs(k - i))
+			return false;
+		i++;
+	}
+	return true;
+}
+void place(int k, int n)
+{
+	if (k > n)
+		display(n);//此时所有皇后放置结束
+	else
+	for (int j = 1; j <= n; j++)//在K行上穷举每一个位置
+	{
+		if (iff(k, j))//找到了合适的位置（k,j)时
+			
+		{
+			q[k] = j;
+			place(k + 1, n);
+		}
+			
+	}
+}
+int main()
+{
+	int n;//实际的皇后数
+	cin >> n;
+	place(1, n);
+}
+```
+
+<img src="C:\Users\14172\OneDrive\图片\屏幕快照\2020-10-24.png" style="zoom:67%;" />
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-10-23 (3).png)
+
+## 2.//生成1～n的排列
+
+```c++
+//我们尝试用递归的思想解决：先输出所有以1开头的排列（这一步是递归调用），然后
+//输出以2开头的排列（又是递归调用），接着是以3开头的排列……最后才是以n开头的排
+//列。
+//或者当前需要确定的元素位置cur，
+void print_permutation(int n, int* A, int cur)
+{
+	if (n == cur)
+	{
+		for (int i = 0; i < n; i++)//递归边界
+		{
+			cout << A[i] << " ";
+
+		}
+		cout << endl;
+	}
+	else for (int i = 1; i <= n; i++)//尝试在A[cur]中填各种整数i
+	{
+		int ok = 1;//标志位 相当于bool
+
+		for (int j = 0; j < cur; j++)
+		
+			if (A[j] == i)//如果i已经在A[0]~A[cur-1]出现过，则不能再选
+				ok = 0;
+			if (ok)
+			{ A[cur] = i;
+			print_permutation(n, A, cur + 1//递归调用
+			}
+			
+		
+	}
+}
+int main()
+{
+	int A[10] = { 0 };
+	print_permutation(4, A, 0);
+}
+```
+
+
+
+# 数组。
+
+## 设计算法高效将数组的奇数元素移到偶数元素后面
+
+
+
+```c++
+//设计算法尽可能高效地将所有奇数元素移动到偶数元素前面
+//设置两个指针 ij i=0,j = n-1,当ij不相等时循环 a[i]找偶数元素 a[j]找奇数元素 当i!=j时发生交换
+
+void swapp(int a[], int n)
+{
+	int i = 0, j = n - 1;
+	int temp;
+	while (i != j)
+	{
+		j--;
+		if (a[j] % 2 == 1)
+		{
+			for (; i != j; i++)
+			{
+				if (a[i] % 2 == 0 && a[j] % 2 == 1 && i != j)
+				{
+					temp = a[i];
+					a[i] = a[j];
+					a[j] = temp;
+					i++;
+					break;
+
+				}
+			}
+		}
+
+	}
+}
+int main()
+{
+
+	m1 = 3;
+	int m[] = { 1,2,3,4,4,5,6 };
+	swapp(m, 7);
+	for (int i = 0; i < 7; i++)
+		cout << m[i];
+	
+}
+```
+
+
+
+## 以第一个元素为基准 大于该基准的移到后面
+
+
+
+```c++
+//以a[0]为基准将所有大于a[0]的元素移到该基准后面 小于等于的元素移到该基准前面 得到一个新的数组
+void swapp(int a[], int n)
+{
+	int temp;
+	int num = a[0];
+	int j = n - 1;//a[j]扫描小于a[0]的 a[i]扫描大于a[0]的 两者发生交换
+	int i = 0;
+	while (i != j) 
+	{
+		j--;
+		if(a[j] < num)
+
+		for (; i != j; i++)
+		{
+			if (a[i] >= num)
+			{
+				temp = a[i];
+				a[i] = a[j];
+				a[j] = temp;
+				i++;
+				break;
+
+				
+			}
+		}
+	}
+}
+```
+
+
+
+## //删除一个已排序好的整数数组的重复元素 返回a[](算法效率问题)
+
+```c++
+//删除一个已排序好的整数数组的重复元素 返回a[](算法效率问题)
+//重建法
+int* delee(int a[], int n)
+{
+	int k = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (a[i] != a[i + 1//如果a[i]不是重复的元素则将a[i]重新插入到a中
+		{
+			a[k] = a[i];
+			k++;//保留的元素增一
+		}
+	}
+	return a;
+}
+```
+
+## //删除给定的有序整数数组 两个或两个以上的 重复元素仅仅保留两个
+
+```c++
+#include<iostream>
+using namespace std;
+int* delee(int a[], int& n)
+{
+	//删除给定的有序整数数组 两个或两个以上的 重复元素仅仅保留两个
+	int k = 0;
+	int b[30] = { 0 };
+	for (int i = 0; i < n-1; i++)
+	{
+		if (a[i] != a[i + 1])
+		{
+			a[k] = a[i];
+				k++;//保留的元素增一
+		}
+		if (a[i] == a[i + 1] && a[i] != a[i + 2] )
+		{
+			a[k] = a[i];
+			
+			a[k+1] = a[i + 1];
+			k += 2;
+			i += 1;
+		}
+	}
+	n = k;//更新数组的个数 用引用传递 这样在主函数中可以获得新数组的大小
+	return a;
+}
+int main()
+{
+	int a[20] = { 2,2,2,2,3,3,3,4,5,6,7,7,8,8,8 };
+	int k = 16;
+	int* b= delee(a,k);
+	for (int i = 0; i < k; i++)
+		cout << b[i] << " ";
+}
+```
+
+## //假设数组a中有m+n个元素空间其中0~m-1存放m个升序 数组b存放n个降序整数 不借助其他数组将这些元素升序存放到a中
+
+
+
+
+
+```c++
+//采用二路归并产生升序数组，用i从a[m-1]的元素开始向前扫描 j从前向后扫描 k=m+n-1指向最后一个位置
+void shengxu(int a[], int m,int b[], int n)
+{
+	int l = 0;
+	int r = m - 1;
+	int k = m+n-1;
+	while (r >= 0 && l < n)
+	{
+		if (b[l] > a[r])//如果b更大
+		{
+			a[k] = b[l];
+			k--;
+			l++;
+		}
+		else
+		{
+			a[k] = a[r];
+			r--;
+			k--;
+
+		}
+		while (r >= 0)//此时a的前半部分没有扫完
+		{
+			a[k] = a[r];
+			k--;
+			r--;
+		}
+		while (l < n)//b的后部分没有扫完
+		{
+			a[k] = b[l];
+			l++;
+			k--;
+		}
+}
+	
+}
+//上述算法时间复杂度为m+n空间复杂度为o(1)
+int main()
+{
+	int a[31] = { -2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21 };
+	int b[10] = { 8,7,6,5,4,3,2,1,-3,-4};
+	shengxu(a, 20, b, 10);
+	for (int i = 0; i < 30; i++)
+		cout << a[i] << " ";
+}
+```
+
+ 
+
+## 高效判断两个数组是否存在相同元素
+
+
+
+```c++
+//采用二路归并产生升序数组，用i从a[m-1]的元素开始向前扫描 j从前向后扫描 k=m+n-1指向最后一个位置
+bool shengxu(int a[], int m,int b[], int n)
+{
+	int i = 0, j = 0;
+	while (i < m && j < n)
+	{
+		if (a[i] == b[j])
+			return true;
+		else if (a[i] > b[j])
+			j++;
+		else
+			i++;
+
+	}
+	return false;
+}
+```
+
+
+
+
+
+
+
+
+
+# 深度优先搜索算法
+
+油田问题
+
+```c++
+//油田问题 一个油田是由m*n个单元组成的矩形，有些里面有石油，一个采油机可以把与该单元油田相连的油田采完，问至少
+//需要多少台采油机
+//@表示有石油
+//采用深度优先搜索算法 设变量many表示采油机 把整个地图搜索完毕 当遇到没有标号的油田时用深度优先搜索把与这块油田相连
+//的其他油田全部进行标号
+#include <iostream>
+
+using namespace std;
+int dfs(int i, int j);
+int mmap[55][55] = { 0 };
+char s[50][50] = { '0' };
+int main()
+{
+	int m, n;
+	cin >> m >> n;
+	
+	for(int i = 0;i < m;i++)
+		for (int j = 0; j < n; j++)
+		{
+			cin >> s[i][j];
+		}
+	int many = 0;
+	for (int i = 0; i < m; i++)
+		for (int j = 0; j < n; j++)
+		{
+			if (mmap[i][j] == 0 && s[i][j] == '@')
+				many += dfs(i, j);
+		}
+	cout << many;
+}
+int dfs(int i, int j)
+{
+	mmap[i][j] = 1;//搜索过的地方置为1
+	if (mmap[i + 1][j] == 0 && s[i + 1][j] == '@')
+		dfs(i + 1, j);
+	if (mmap[i][j + 1] == 0 && s[i][j + 1] == '@')
+		dfs(i, j + 1);
+	if (mmap[i - 1][j] == 0 && s[i - 1][j] == '@')
+		dfs(i - 1, j);
+	if (mmap[i][j - 1] == 0 && s[i][j - 1] == '@')
+		dfs(i, j - 1);//将该点周围上下左右四个点全部搜索并且标记为1
+	return 1;//搜到一个符合条件的点时加一
+
+}
+```
+
+
+
+## 2.油田问题 一个m行n列的字符矩阵 统计字符@组成多少个八连块 
+
+```c++
+//油田问题 一个m行n列的字符矩阵 统计字符@组成多少个八连块 DFS更容易编写  递归遍历它周围的@
+//每次访问一个格子就给它写上一个“连通分量编号”，这样可以在访问之前检查它是否已经有了编号，避免多次访问
+const int maxx = 105;
+char pic[maxx][maxx];
+int col, row, idx[maxx][maxx];//一个数组是编号一个数组是字符
+void dfs(int r, int c, int id)//id是连通分量编号
+{
+	if (r < 0 || r >= row || c < 0 || c >= col) return;//越界检测
+	if (pic[r][c] != '@' || idx[r][c] > 0) return;//如果不是@或者是已经访问过的格子
+	idx[r][c] = id;//进行标记 将未访问过的含@格子编号 注意在一个八连块的格子编号相同
+	for(int i = -1;i<=1;i++)
+		for (int j = -1; j <= 1; j++)//上下左右寻找
+		{
+			if (i != 0 || j != 0)
+				dfs(r + i, c + j, id);
+		}
+}
+
+int main()
+{
+	
+	
+	cin >> col >> row;
+	memset(idx, 0, sizeof(idx));
+	for (int i = 0; i < row; i++)
+		for (int j = 0; j < col; j++)
+			cin >> pic[i][j];
+	int cns = 0;
+	for (int i = 0; i < row; i++)
+		for (int j = 0; j < col; j++)
+			if(pic[i][j] == '@' && idx[i][j] == 0)
+			dfs(i, j, ++cns);
+	cout << cns;
+}
+```
+
+## 3.n件物品放入若干背包
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-19.png)
+
+```c++
+const int maxn = 30;
+int c[maxn], w[maxn];
+int v, n, maxvalue = 0;//v:背包容量 n:物品件数 最大价值maxvalue index:当前物品编号
+void dfs(int index, int sumw, int sumc)
+{//sumw为当前的背包容量 sumc为当前背包价值
+	if (index == n) //已经完成对n件物品的选择 死路
+	{
+		if (sumw <= v && sumc > maxvalue)
+			maxvalue = sumc;
+		return;
+	}
+	dfs(index + 1, sumw, sumc);
+	dfs(index + 1, sumw + c[index], sumc + w[index]);
+}
+int main()
+{
+	char m;
+	cin >> n >> v;
+	for (int i = 0; i < n; i++)
+		cin >> c[i] ;//每件物品的重量和价值
+	for (int i = 0; i < n; i++)
+		cin >> w[i];
+		}
+```
+
+<img src="C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-20 (1).png" style="zoom:150%;" />
+
+# 螺旋矩阵 子矩阵之和（递归和非递归算法）
+
+
+
+![](C:\Users\14172\Pictures\数组.jpg)
+
+![](C:\Users\14172\Pictures\数组2.jpg)
+
+![](C:\Users\14172\Pictures\子矩阵.jpg)
+
+![](C:\Users\14172\Pictures\子矩阵解答.jpg)
+
+
+
+# 求一个a矩阵以（i,j)和(m,n)为对角线的子矩阵元素之和
+
+
+
+```c++
+//求一个a矩阵以（i,j)和(m,n)为对角线的子矩阵元素之和
+int a[][100];
+void sum(int a[][100], int b[][100], int m, int n)
+{
+    b[0][0] = a[0][0];
+    for (int i = 1; i < m; i++)
+        b[0][i] = b[0][i - 1] + a[0][i];
+    for (int i = 1; i < m; i++)
+        b[i][0] = b[i - 1][0] + a[i][0];
+        
+    for (int i = 1; i < m; i++)
+        for (int j = 1; j < n; i++)
+            b[i][j] = b[i - 1][j] + b[i][j - 1] - b[i - 1][j - 1] + a[i][j];//引入数组b b(i,j)存储的是以a[0][0] a[i][j]
+    //为对角线的矩阵元素之和
+}
+int ziju(int b[][100], int s, int t, int m, int n)
+
+{
+    if(m == 0 && n == 0)
+        return b[m][n];
+    int sum = b[m][n] - b[m][t - 1] - b[s - 1][n] + b[s - 1][t - 1];
+    return sum;
+}
+
+```
+
+
+
+
+
+## 递归和非递归创建螺旋矩阵
+
+```c++
+//创建一个n阶螺旋矩阵并输出
+//对于左上角（ix,iy)右下角(ex,ey)起始元素为start的那一圈，通过调用函数1产生 函数2用于创建整个螺旋矩阵
+//设f(x,y,start,n)用于创建左上角为(x,y)起始元素为start的n阶螺旋矩阵，是大问题，则f(x+1,y+1,start,n-2)是小问题
+//（去掉最外面一大圈后剩下的部分）
+//有递归算法和非递归算法
+int a[15][15] = { 0 };
+void create(int& start,int ix,int iy,int ex,int ey)//最外面的大圈
+{
+    if (ix == ex)
+        a[ix][iy] = start++;//当该圈只有一个元素时
+    else
+    {
+        int curl = iy;
+        while (curl != ey)
+            a[ix][curl++] = start ++;
+        curl = ix;
+        while (curl != ex)
+            a[curl++][ey] = start++;
+        curl = ey;
+        while (curl != iy)
+            a[ex][curl--] = start++;
+        curl = ex;
+        while (curl != ix)
+            a[curl--][iy] = start++;
+    }
+    
+}
+void spira(int x,int y,int n,int start)//递归调用螺旋矩阵
+{
+    if (n <= 0)//退出递归条件
+        return;
+    if (n == 1)
+    {
+        a[x][y] = start;//矩阵大小为1时
+        return;
+    }
+    else
+    {
+        for (int i = y; i < y+n-1; i++)//上一行
+            a[x][i] = start++;
+        for (int i = x; i < x+n-1; i++)//右一列
+            a[i][x +n-1] = start++;
+        for (int i = x +n-1;i > y; i--)//下一行
+            a[x + n-1][i] = start++;
+        for (int i =x+ n-1; i > x; i--)//左一列
+            a[i][y] = start++;
+        spira(x+1,y + 1, n-2,start);//递归调用自身
+    }
+
+}
+void spira2(int n)//非递归调用螺旋矩阵
+{
+    int start = 1;
+  
+        int i = 0, j = 0, ex = n - 1, ey = n - 1;
+        while (i <= ex)
+            create(start, i++, j++, ex--, ey--);// 不断循环调用创建最外圈元素的函数
+    
+}
+void display(int n)
+{
+    for (int i = 0; i < n; i++)
+    { for (int j = 0; j < n; j++)
+        
+            cout << a[i][j] << " ";
+    cout << endl;//输出
+        }
+}
+```
+
+![](C:\Users\14172\Pictures\屏幕截图 2020-10-28 210335.png)
+
+
+
+## //有两个有序数组ab 元素个数m,n 设计一个高效算法求a和b的差集
+
+```c++
+//设a-b的元素数组为c
+int a[5], b[5];
+int c[8] = { 0 };
+void chaji(int m,int n,int a[],int b[])
+{
+    int i = 0, k = 0, j = 0;//k来维护c中元素个数
+    while (i < m && j < n)//注意这个while循环很重要不能遗漏否则无法得到正确结果
+    {
+        if (a[i] < b[j])
+        {
+            c[k] = a[i];
+            i++;
+            k++;//只将a中较小的元素放入c中
+        }
+        else if (a[i] > b[j])//如果b中元素更小则跳过
+        {
+            j++;
+        }
+        else//如果元素相等 不能放入C中 下标加一
+        {
+            i++;
+            j++;
+        }
+    }
+        while (i < n)//注意要将如果a没有遍历完则全部放入C中
+        {
+            c[k] = a[i];
+            i++;
+            k++;
+        }
+    
+}
+int main()
+{
+
+
+    
+    int a[5] = { 3,4,9,10,77};
+    int b[5] = { 2,3,5,6,4 };
+    chaji(5, 5, a, b);
+    for (int i = 0; i < 8; i++)
+        cout << c[i]<<" ";
+}
+```
+
+
+
+
+
+# 基于链表的算法设计
+
+- 通常单链表是带头结点的结构，单链表如果有头结点，通常用头结点的地址即头指针来标识整个单链表，第一个**数据结点**称为首结点，指向首结点的指针称为首指针，
+- **头结点**是在链表的首元结点之前附设的一个结点；数据域内只放空表标志和表长等信息，它不计入表长度。
+  **首元结点**是指链表中存储线性表第一个数据元素a０的结点。
+  其中头指针只是指针，它指向头结点或首元结点所对应的地址，在程序中，并没有给它分配固定的内存；而头结点和首元结点却对应着固定的内存。头结点和首元结点的区别在于数据域中是否存放了数据元素，头结点中的数据域为空，或存放表长信息，引入它是为了方便链表的插入和删除操作；而首元结点的数据域中会存储第一个数据元素的值。
+- ![](C:\Users\14172\Pictures\==.png)
+
+
+
+- Head指针为单链表的头指针，单链表L：L既是单链表的名字，也是其头指针。链表中的最后一个结点的指针域定义为空指针(NULL)。那么什么是头指针呢？我们把指向第一个结点的指针称为头指针，那么每次访问链表时都可以从这个头指针依次遍历链表中的每个元素，例如：
+
+- struct node first;
+
+  struct node *head = &first;这个head指针就是头指针。
+   这个头指针的意义在于，在访问链表时，总要知道链表存储在什么位置（从何处开始访问），由于链表的特性（next指针），知道了头指针，那么整个链表的元素都能够被访问，也就是说头指针是必须存在的。示例如下
+
+  ```c++
+  示例如下：
+  
+  
+  
+  #include <stdio.h>  
+    
+  struct node {  
+      int data;  
+      struct node *next;  
+  };  
+    
+  int main(void)  
+  {  
+      struct node *head, first, second;  
+    
+      head = &first;  
+      first.data = 1;  
+      first.next = &second;  
+        
+      second.data = 2;  
+      second.next = NULL;  
+        
+      while (head) {  
+          printf("%d\n", head->data);  
+          head = head->next;  
+      }  
+      return 0;  
+  }  
+  ```
+
+  需要着重注意的是while那部分（通过头指针遍历完整个链表）。   
+
+   
+
+  单链表有带头结点和不带头结点之分。
+
+  ![](C:\Users\14172\Pictures\111.jpg)
+
+```c++
+1.单链表的初始化，即建立一个空链表。
+[plain] view plain copy
+
+
+//不带头结点的单链表的初始化  
+void LinkedListInit1(LinkedList L)  
+{  
+  L=NULL;  
+}  
+//带头结点的单链表的初始化  
+void LinkedListInit2(LinkedList L)  
+{  
+  L=(LNode *)malloc(sizeof(LNode));  
+  if(L==NULL)  
+  {  
+    printf("申请空间失败！");  
+    exit(0);  
+  }  
+  L->next=NULL;  
+}  
+ 
+
+
+```
+
+那么什么又是头结点呢？很多时候，会在链表的头部附加一个结点，该结点的数据域可以不存储任何信息，这个结点称为头结点，
+头结点的指针域指向第一个结点，例如：
+
+ 
+
+struct node head, first;
+
+head.next = &first;
+
+那么这里的头指针又是谁呢，不再是指向第一个结点的指针，而是指向头结点的指针，例如：
+
+```html
+struct node *root = &head;
+```
+
+ 
+
+即root指针才是头指针。示例如下：
+
+
+
+1. \#include <stdio.h> 
+2. 
+3. **struct** node { 
+4. **int** data; 
+5. **struct** node *next; 
+6. }; 
+7. 
+8. **int** main(**void**) 
+9. { 
+10. **struct** node *root, head, first, second; 
+11. 
+12. root = &head; 
+13. root->data = 0; 
+14. root->next = &first; 
+15. 
+16. first.data = 1; 
+17. first.next = &second; 
+18. 
+19. second.data = 2; 
+20. second.next = NULL; 
+21. 
+22. **while** (root) { 
+23. ​    printf("%d\n", root->data); 
+24. ​    root = root->next; 
+25. } 
+26. 
+27. **return** 0; 
+28. } 
+
+## 1.删除非空链表中值最大的结点
+
+```c++
+struct linklist
+{
+	int data;
+	linklist* next;
+};
+void shanchu(linklist* p)
+{
+	linklist* head = new linklist;
+	p = head->next;
+linklist* L = head;//p的前驱结点
+	int max = p->data;
+	while (p != NULL)//查找最大的结点
+	{
+		p = p->next;
+		if (p->data > max)
+			max = p->data;
+	}
+	p = head->next;
+	while (p != NULL)
+	{
+		if (p->data == max)
+		{
+			L->next = p->next;
+			delete p;
+			p = L->next;//让p继续指向L结点的后继结点
+		}
+		else
+		{
+			L = p;
+			p = p->next;//L和p都同时前移
+		}
+	}
+}
+```
+
+## 2.将两个递增有序单链表合并为一个递减有序单链表
+
+空间复杂度为o(1)的头插法:
+
+```c++
+struct linknode
+{
+	int data;
+	linknode* next;
+};
+void guibing(linknode* &L1, linknode* &L2, linknode*& L3)
+{
+	linknode* p1 = L1->next,*p2 = L2->next,*p3;
+	delete L1;//释放L1头结点并置为NULL
+	delete L2;
+	L1 = NULL;
+	L2 = NULL;
+	L3 = new linknode;
+	L3->next = NULL;
+	while (p1 != nullptr && p2 != nullptr)
+	{
+		if (p1->data > p2->data)
+		{
+			p3 = p1->next;//临时保存p1结点的后继结点
+			p1->next = L3->next;//采用头插法将p1插入到L3中
+			L3->next = p1;
+			p1 = p3;//p1指向下一个结点
+		}
+		else
+		{
+			p3 = p2->next;
+			p2->next = L3->next;
+			L3->next = p2;
+			p2 = p3;
+		}
+	}
+	if (p2 != nullptr)
+	{
+		p1 = p2;//如果p2没有扫完 让p1指向p2结点
+	}
+	while (p1 != nullptr)
+	{
+		p3 = p1->next;//临时保存p1结点的后继结点
+		p1->next = L3->next;//采用头插法将p1插入到L3中
+		L3->next = p1;
+		p1 = p3;//p1指向下一个结点
+	}
+}
+
+```
+
+![](C:\Users\14172\Pictures\22.jpg)
+
+
+
+
+
+将长度为n的单链表连接在长度为m的单链表之后，时间复杂度为m.（先通过遍历找到尾结点p 再让p结点的指针域指向长度为n的单链表首结点。）
+
+
+
+## 3.递归算法逆置非空单链表
+
+```c++
+struct linknode
+{
+	int data;
+	linknode* next;
+};
+//注意下面这个函数参数是值参数(对应的实参不变）而不是引用参数。如果改为引用是错误的
+linknode* nizhi(linknode* first)//first为不带头结点的
+{
+	linknode* p;
+	if (first == nullptr || first->next == nullptr)
+		return first;
+	p = nizhi(first->next);
+    first->next->next = first;//first结点连接到first->next结点的后面 注意二者顺序
+	first->next = NULL;//first结点作为逆置后的尾结点
+	return p;
+}
+//引用作为参数
+void nizhi1(linknode* &L)//L为带头结点的单链表
+{
+	L->next = nizhi(L->next);//L->next为不带头结点的单链表 调用第一个函数
+}
+```
+
+
+
+## 4.逆置单链表中序号为i到j的结点
+
+------
+
+注意ij参数可能错误
+
+```c++
+struct linknode
+{
+	int data;
+	linknode* next;
+};
+//逆置非空单链表中序号从i到j的结点
+//为了防止i与j超过范围要先求出长度 且第二个函数为bool型
+int length(linknode* m)
+{
+	int k = 0;
+	linknode* p = m;
+	while (p != nullptr)
+	{
+		p = p->next;
+		k++;
+	}
+	return k;//先求出单链表长度
+}
+bool nizhiij(linknode* &L,int i,int j)
+{
+	linknode* r;
+	int len = length(L);
+	if (i < 0 || i > len || j < 0 || j> len)
+		return false;
+	else
+	{
+		int n = 0;
+		linknode* p = L,*q;
+			
+		while (n < i - 1 && p != NULL)
+		{
+			n++;
+			p = p->next;
+		}//p为第i-1个结点
+		linknode* m = p;
+		linknode*r = p->next;
+		p1 = r;//用p1保存逆置的第一个结点
+		p->next = NULL;//断开第i和第i-1个结点
+		while (n < j && r != NULL)
+		{
+            n++;
+			q = r->next;//不断将r结点到第j个结点采用头插法插入到m结点之后
+			r->next = m->next;
+			m->next = r;
+			r = q;
+		}
+		p1->next = q;//将第j个结点的后继结点接到p1结点之后
+		return true;
+
+	}
+}
+```
+
+## 5.对于一个带头结点的单链表以第一个结点为基准 将所有小于其值的结点移动到它前面 将所有大于等于其值的结点移动到它后面
+
+```c++
+void yidong(linknode* a)
+{
+	linknode* p = a->next;//p指向首结点
+	int data1 = p->data;//cache指向其后继结点 如果cache值小于p值 通过p将cache删除
+	linknode* cache = p->next;
+	if (a != nullptr || a->next == nullptr)
+		return;
+	while (cache != nullptr)
+	{
+
+		int da2 = cache->data;//da2存放基准值
+		if (da2 >= data1)//此时p和cache同步后移
+		{
+			p = cache;
+			cache = p->next;
+		}
+		else
+		{
+			p->next = cache->next;//如果cache结点的值小于基准值 删除cache结点 头插法查到表a中
+			cache->next = a->next;
+			a->next = cache;
+			cache = p->next;//cache继续指向p结点的后继结点
+		}
+	}
+}
+```
+
+## 6.设计一个算法求非空单链表中间位置结点
+
+(1,2,3,4)的中间位置是结点2 （1，2，3，4，5）中间位置是5
+
+```c++
+//方法：用快慢两个指针 快指针一次移动两个结点 循环结束后slow指向的结点即目标结点
+linknode* middle(linknode* L)
+{
+	if (L == nullptr)
+		return NULL;
+	if (L->next == nullptr)
+		return L;
+	linknode* fast = L->next,*slow = L->next;
+	while (fast != nullptr && fast->next != nullptr)
+	{
+		fast = fast->next->next;
+		slow = slow->next;
+	}
+	return slow;
+
+}
+```
+
+### 尾插法
+
+![](C:\Users\14172\Pictures\untitled.png)
+
+![]()![image-20201031140417053](C:\Users\14172\AppData\Roaming\Typora\typora-user-images\image-20201031140417053.png)
+
+![](C:\Users\14172\Pictures\21.png)
+
+注意是r->next = L1->next;(注意这两个链表都有头结点)
+
+## 7.将一个非空单链表（a1,a2,..an,b1,b2..bn)重新排列为(a1,b1,a2,b2...,an,bn)
+
+```c++
+//空间复杂度为O(1)
+//采用尾插法 建立新表L r作为尾指针 利用上一题求中间结点的函数找到中间结点
+void rearrange(linknode* &L)
+{
+	if (L == NULL)
+		return;
+	linknode* mid = middle(L);//此题结点个数是偶数
+	linknode* r = L;//新链表的尾结点
+	linknode* p = r->next;//p指向结点a1
+	linknode* q = mid->next;//q指向结点b1
+	while (p != nullptr && q != nullptr)
+	{
+	
+		r->next = p;//p结点链接到新链表的表尾
+		r = p;
+		r->next = q;
+		r = q;
+		p = p->next;
+		q = q->next;
+
+	}
+	r->next = NULL;//尾结点的指针域置空（尽管这里不需要，但这是一个好习惯）
+
+}
+```
+
+## 8.设计一个算法判断一个非空单链表是否为回文
+
+```c++
+//非递归算法 找到中间结点 后半部分构成带头结点的单链表p 将p逆置 然后依次按照结点顺序判断数据是否相等
+
+bool ispal(linknode* L)
+{
+	if (L->next == nullptr || L->next->next == nullptr)
+		return true;
+	linknode *q,*q2,* p = new linknode;
+	linknode* mid = middle(L);//中间结点
+	p->next = mid->next;//将后半部分结点构成带头结点的单链表
+	
+	reverse(p);//逆置带头结点的单链表
+	mid->next = p->next;//重新连接
+	q = p->next;
+	q2 = L->next;
+	while (q != nullptr && q2 != mid->next)
+	{
+		if (q->data !=q2->data)
+			return false;
+		q = q->next;
+		q2 = q2->next;
+	}
+	return true;
+}
+
+```
+
+## 9.判断序列B是否是A序列的子序列
+
+```c++
+//先在A中找到与B结点值相等的结点pa,pb指向B的首结点然后比较值是否相等 相等则同步后移
+bool subseq(linknode* A, linknode* B)
+{
+	linknode* pa = A->next;
+	
+	while (pa != nullptr)
+	{
+		linknode* pb = B->next;//每次循环开始pb都是指向B的首结点
+		while(pa->next != nullptr && pa->data != pb->data)//只用来求出与B第一个结点相等的A中结点pa 
+			
+		{
+			pa = pa->next;
+			
+		}
+		linknode* q = pa;//用q来保存pa  ,以便pa进行下一轮循环（如果进入下一轮循环仍要匹配A中与B第一个结点相等的其他结点）
+		while (q != nullptr && pb != nullptr && q->data == pb->data)
+		{
+			q = q->next;//如果值相等同步移动
+			pb = pb->next;
+	}
+			if (pb == nullptr)
+				return true;
+			else if(pa->next != nullptr)//如果A序列没有遍历完 ，则从下一个结点开始重复进行
+			{
+				pa = pa->next;
+			}
+		
+	}
+	return false;
+}
+```
+
+## 不同颜色排列（数量未知） 【有无头结点的写法】
+
+L有头结点 L1,L2无  
+
+![](C:\Users\14172\Pictures\untitled.png)
+
+![](C:\Users\14172\Pictures\00.png)
+
+
+
+## 11.将三个递增序列合并为一个
+
+```c++
+//高效将三个递增有序单链表的所有结点归并为一个递增有序单链表
+//三个有序单链表用L[3]指针数组标识，x[3]存放要比较的结点值，当i扫描完后x[i]取值为无穷
+#define INF 32767
+int Min(int x[], int k)
+{
+	int i ,mink = 0;//mink存放下标标号
+	for (i = 0; i < k; i++)
+	{
+
+		if (x[i] < x[mink])
+			mink = i;
+	}
+	if (x[mink] == INF)
+		return -1;
+	else
+		return mink;
+}
+
+void merge3(linknode* L[3], linknode*& L1)//L1为结果单链表
+{
+	linknode* r1[3], * r;
+	L1 = new linknode;
+	r = L1;//r为尾结点指针
+	int x[3];
+	for (int i = 0; i < 3; i++)
+		r1[i] = L[i]->next;//r1[i]指向L[i]单链表的首结点
+	for (int i = 0; i < 3; i++)
+		x[i] = (r1[i] != NULL )? r1[i]->data : INF;//先判断是否为空 非空则存放结点值
+	
+	while (true)
+	{
+		int k = Min(x, 3);//存储标号
+		if (k == -1)//此时全部归并完毕
+			break;
+		else
+		{
+			linknode* s = new linknode;
+			s->data = x[k];//新建一个结点 存放的数值是最小结点的数值
+			r->next = s;
+			r = s;//尾插法 最小结点值插到新表表尾
+			r1[k] = r1[k]->next;//后移较小结点的扫描指针
+			x[k] = (r1[k] != NULL)?r1[k]->data:INF;//先判断链表是否为空
+		}
+		
+	}
+	r->next = NULL;
+}
+```
+
+## 12.设计一个算法由单链表A产生单链表B 
+
+```c++
+//非递归：扫描A的所有结点，通过复制来创建B的结点 尾插法将结点链接起来
+void copy1(linknode* A, linknode* &B)
+{
+	linknode* a1 = A->next;
+	
+	B = new linknode;
+	linknode* r = B;
+	while (a1 != nullptr)//一边扫描A的结点一边复制
+	{
+		linknode* hb = new linknode;
+		hb->data = a1->data;
+		r->next = hb;//将hb结点连接到B的末尾
+		hb->prior = r;
+		r = hb;
+		a1 = a1->next;
+	}
+	r->next = NULL;//尾结点next置空
+}
+//递归：若pa是A的首指针，首先创建双链表B的头结点hb(无数据）,由pa创建的递归模型如下:
+//f(pa,hb,pb)==pb=null 当pa=null
+void copy(linknode* pa, linknode* hb, linknode* &pb)
+{
+	if (pa == nullptr)
+		pb = nullptr;
+	else
+	{
+		pb = new linknode;
+		pb->data = pa->data;
+		pb->prior = hb;
+		copy(pa->next, pb, pb->next);
+	}
+}
+void copy2(linknode* A, linknode* &B)//从链表A产生链表B
+{
+	B = new linknode;//头结点
+	copy(A->next, B, B->next);//A.next为首结点
+}
+```
+
+## 13.找到有环单链表的入口处
+
+```c++
+//设从起点到环入口处为a 两者相遇点距入口处距离b
+//先设置一个快慢指针 可以通过画图和数学转化得到当两者相遇时 再走a步就到环入口处 可再设一个从起点出发的指针
+linknode* findcycle(linknode* L)
+{
+	linknode* slow = L;
+	linknode* fast = L;
+	while (fast != nullptr && fast->next != nullptr)
+	{
+		fast = fast->next->next;
+		slow = slow->next;
+		if (fast == slow)//相遇处
+		{
+			linknode* p = L;
+			while (L != slow)//p slow都指向同一个结点时即入口处
+			{
+				L = L->next;
+				slow = slow->next;
+			}
+			return slow;
+		}
+	}
+}
+```
+
+## 14删除两个循环双链表中所有data相同的结点
+
+```c++
+bool deletenode(linknode*&phead,int value)//删除循环双链表中值为Value的结点 有则返回真
+{
+	if (phead == nullptr)
+		return false;
+	bool flag = false;
+	linknode* pre = phead;
+	linknode* p = pre->next;
+	while (p != nullptr)
+	{
+		if (p->data == value)
+		{
+			p->next->prior = pre;//删除p指向的结点
+			pre->next = p->next;
+			delete p;
+			p = pre->next;
+			flag = true;
+		}
+		else
+		{
+			pre = p;//pre p指针
+			p = p->next;//同步后移
+	
+		}
+	}
+	return flag;
+}
+void deletenode1(linknode* a1, linknode* a2)//a1,a2是头指针
+{
+
+	if (a1->next == a1 || a2->next == a2)//有一个表为空表时直接返回
+		return;
+	linknode* pre1 = a1, * p = pre1->next;
+	linknode* pre2 = a2, * q = pre2->next;
+	while (p!= a1)//扫描a1的结点p
+	{
+		int val = p->data;
+		if (deletenode(q,val))
+		{
+			
+			linknode* r = p;
+			linknode* m = pre1;
+			while (r != a1)//再扫描 删除表a1中所有这样的结点
+			{
+			
+				if (r->data == val)
+				{
+					r->next->prior = m;
+					m->next = r->next;
+					free(r);
+					r = m->next;
+
+				}
+				else
+				{
+					m = r;
+					r = r->next;//同步后移
+				}
+			}
+			p = pre1->next;//如果链表a1结点被删除了的话p要从上一个结点现在的下一个结点开始
+		}
+		else
+		{
+			pre1 = p;
+			p = p->next;//p和指向p的前一个结点的指针同步后移
+
+
+		}
+	}
+
+}
+```
+
+- 解法2
+
+- ```c++
+  //解放2 先链表排序 再二路归并
+  void sort(linknode*& L)//双链表递增排序
+  	{
+  	linknode*q,*pre;
+  	linknode* p = L->next->next;
+  	L->next->next = L;
+  	L->prior = L->next;//建立只有一个头结点的循环双链表
+  	while (p != L)
+  	{
+  		pre = L;
+  		while (p != L && pre->next->data < p->data)
+  			pre = pre->next;//如果符合这个条件则pre指针后移继续搜寻 目的是找到能正确插入p结点的位置 找到后p插在pre结点之后
+  		q = p->next;//要先保存p.next的地址
+  		p->next = pre->next;
+  		pre->next->prior = p;
+  		pre->prior = p;
+  		p->next = pre;
+  		p = q;
+  	}
+  }
+  void deletn2(linknode*& a1, linknode*& a2)
+  {
+  	int val;
+  	
+  	sort(a1);
+  	sort(a2);
+  	linknode* p1 = a1->next, * p2 = a2->next, * pre=a1,*prb=a2;
+  	while (p1 != a1 && p2 != a2)
+  	{
+  		if (p1->data < p2->data)
+  		{
+  			pre = p1;
+  			p1 = p1->next;
+  		}
+  		else if (p1->data < p2->data)
+  
+  		{
+  			prb = p2;
+  			p2 = p2->next;
+  		}
+  		else
+  		{
+  			val = p1->data;
+  			while (p1 != a1)//删除a1中所有相同的结点
+  			{
+  				
+  				if (p1->data == val)
+  				{
+  					
+  					pre->next = p1->next;
+  					p1->next->prior = pre;
+  					delete(p1);
+  					p1 = pre->next;
+  				}
+  				else break;//由于已经是排序之后 如果无相同元素则可退出
+  			}
+  			while (p2 != a2)//删除a2中所有相同的结点
+  			{
+  				if (p2->data == val)
+  				{
+  
+  					prb->next = p2->next;
+  					p2->next->prior = prb;
+  					delete(p2);
+  					p2 = prb->next;
+  				}
+  				else break;
+  			}
+  		}
+  	}
+  }
+  ```
+
+  
+
+## 15.指针异常的链表翻转
+
+![](C:\Users\14172\Pictures\异常链表.jpg)
+
+```c++
+struct node {
+    node* p1;
+    node* p2;
+    int data;
+};
+//p2指针逆置：
+void reverse(node*& p)
+{
+    node* r = p->p2;
+    node* q;
+    p->p2 = p;//建立一个空循环链表
+    while (r != p)
+    {
+        q = r->p2;//临时保存p2方向的后继结点
+        r->p2 = p->p2;//将r结点插入到首部
+        p->p2 = r;
+        r = q;//后移
+    }
+}
+node* revert(node* head)//翻转链表head并返回头指针
+{
+    if (head->p1 == nullptr || head == nullptr)
+        return NULL;
+    reverse2(head);//逆置p1指针
+    reverse(head);//逆置p2指针
+    return head;
+}
+```
+
+![](C:\Users\14172\Pictures\异常指针2.jpg)
+
+### 删除一个双向链表中的所有结点 
+
+```c++
+//删除一个双向链表中的所有结点 有prior和next两个指针域 设p指向链表中的一个结点：
+p->next->prior = p->prior;
+p-prior->next = p->next;
+free(p);
+
+```
+
+## 16.删除一个单链表中倒数第k个结点（倒数不是正数） 有头结点
+
+```c++
+//假设p q指向头结点 先移动p指针
+bool delerk(node*& L, int k)
+{
+    node* p = L;
+    node* q = L;
+    int i = 0;
+    while (p != nullptr)
+    {
+        i++;
+        p = p->next;
+    }
+    //p是第k个结点
+    if (p == nullptr) return false;
+    while (p->next != nullptr)
+    {
+        q = q->next;
+        p = p->next;
+    }//退出循环时p指向尾结点
+    p = q->next;//p此时指向倒数第k个结点
+     p->next = q->next  ;
+     q->next = p;
+     delete p;//删除p结点
+     return true;
+
+}
+```
+
+## 17.直接插入法将一个单链表递增排序
+
+```c++
+struct node {
+    node* next;
+    
+    int data;
+};
+//采用直接插入法将一个单链表递增排序
+void sort(node*& L)
+{
+    node *q,* p = L->next->next;//p指向第二个数据结点
+    L->next->next = NULL;//构造一个只有一个数据结点的有序表
+    while (p != nullptr)
+    {
+        node* pre = L;//从有序表开头进行比较 pre指向插入结点的前驱结点
+        
+        while (pre->next != NULL && pre->next->data <  p->data)
+            pre = pre->next;//在表中寻找p所指结点的前驱结点（即pre)
+        q = p->next;//用于临时保存
+        p->next = pre->next;
+        pre->next = p;//在pre所指结点之后插入p所指结点
+        p = q;//后移一个 扫描原单链表剩余的结点
+    }
+
+}
+```
+
+## 18.约瑟夫问题
+
+```C++
+//约瑟夫问题 一共n人，从编号k的人开始从1报数，报m的人出列 它的下一位又从1开始 直到所有人出列
+//先建立一个循环链表 无头结点 首结点为first 从first开始移动k个人 找到第k个再循环n次 
+typedef struct node
+{
+    int data;
+    struct node* next;
+}linknode;
+void createlist(linknode*& first, int n)
+{
+    linknode* s, * r;
+    first = new linknode;
+    first->data = 1;
+    r = first;//尾插法建立循环单链表
+    for (int i = 2; i <= n; i++)
+    {
+        s = new linknode;//创建新节点s
+        s->data = i;
+        r->next = s;
+        r = s;
+    }
+    r->next = first;//设置为循环单链表
+
+
+}
+void move(linknode*& first, int k)//移动k个节点
+{
+
+    for (int i = 1; i < k; i++)
+    {
+        first = first->next;
+    }
+}
+void jose(int n, int k, int m)
+{
+    int j;
+    linknode* first, * q;
+    createlist(first, n);
+    move(first, k);
+    for (j = 1; j <= n; j++) 
+    {
+        move(first, m - 1);
+        q = first->next;
+        cout << q->data << " ";
+        first->next = q->next;
+        delete q;
+        first = first->next;
+    }
+}
+
+int main()
+{
+    int n = 8, k = 4, m = 4;
+    jose(n, k, m);
+}
+```
+
+7 3 8 5 4 6 2 1
+C:\Users\14172\source\repos\ConsoleApplication10\Debug\ConsoleApplication10.exe (进程 20664)已退出，代码为 0。
+按任意键关闭此窗口. .
+
+
+
+## 19.【未完全弄懂】▲▲数组实现链表 悲剧文本
+
+```
+最简单的想法便是用数组来保存这段文本，然后用一个变量pos保存“光标位置”。这
+样，输入一个字符相当于在数组中插入一个字符（需要先把后面的字符全部右移，给新字符
+腾出位置）。
+很可惜，这样的代码会超时。为什么？因为每输入一个字符都可能会引起大量字符移
+动。在极端情况下，例如，2500000个a和“[”交替出现，则一共需要0+1+2
+```
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-15 (2).png)
+
+为了方便起见，假设字符串s的最前面还有一个虚拟的s[0]，则next[0]就可以表示显示屏 中最左边的字符。再用一个变量cur表示光标位置：即当前光标位于s[cur]的右边。cur=0说明 光标位于“虚拟字符”s[0]的右边，即显示屏的最左边。为了移动光标，还需要用一个变量last表示显示屏的最后一个字符是s[last]。代码如下：
+
+```c++
+/解决方案是采用链表（linked list）。每输入一个字符就把它存起来，设输入字符串是
+//s[1～n]，则可以用next[i]表示在当前显示屏中s[i]右边的字符编号（即在s中的下标）(1)
+int nextt[1000];
+char s[1000];
+int main()
+{
+	
+	while (cin >> s+1)
+	{
+		int len = strlen(s+1);
+		int i, last = 0, cur = 0;//光标位于cur号字符的后面
+		nextt[0] = 0;//注意这几个变量赋值的位置不能在while之外或者main之外，这样才能保证下次输入新字符串时结果仍然正确
+		for (i = 1; i <= len; i++) 
+		{
+			if (s[i] == '[') cur = 0;
+			else if (s[i] == ']') cur = last;//光标移动到最后的位置
+			else
+			{
+				nextt[i] = nextt[cur];
+				nextt[cur] = i;
+				if (cur == last)last = i; //更新"最后一个字符"编号
+				cur = i;
+			}
+		}
+		for (i = nextt[0]; i != 0; i = nextt[i])
+			cout << s[i];
+	}
+}
+
+```
+
+
+
+## 20.双向链表
+
+双向链表（doubly linked list）：用left[i]和right[i]分别表示编号为i的盒 子左边和右边的盒子编号（如果是0，表示不存在），则下面的过程可以让两个结点相互连 接： void link(int L, int R) { right[L] = R; left[R] = L; }
+
+# 字符串
+
+
+
+结果:bbfuewrhnbdwuauf(输入)
+bfuewrhndad
+
+## 1处理一个字符串 只在字符第一次出现时保留其他的删除
+
+```c++
+bool dupchar(char* s, int m, char c)//判断s[0..m]中是否有字符c
+{
+    for (int i = 0; i <= m; i++)
+    {
+        if (s[i] == c)
+            return true;
+    }
+    return false;
+}
+
+void deldupchar(char* s)//重建法 k记录保留的字符个数 
+{
+    int k = 1,i;
+    if (!s[0] || !s[1])//s为空或单个字符时直接返回
+        return;
+    for (i = 1; s[i]; i++)
+    {
+        if (!dupchar(s, i - 1, s[i]))//当s[i]不是单个字符时直接插入
+        {
+            s[k] = s[i];
+            k++;
+        }
+    }
+    s[k + 1] = '\0';//设置结尾符
+}
+
+int main()
+{
+    char s[48];
+    cin >> s;
+    deldupchar(s);
+    cout << s;
+}
+```
+
+## 2原地压缩字符串
+
+eeeeffagg压缩为e4f2ag2
+
+```c++
+void rebuild(char* s)
+{
+    int i = 0, index = 0;
+    while (s[i])//当字符不为空
+    {
+        int k = i, num = 1;
+        if (s[k + 1] != s[k])
+        {
+            s[index] = s[k];
+            index++;
+            i++;
+            continue;
+        }
+        else 
+        {
+            while (s[k + 1] == s[k])
+            {
+                num++;
+                k++;
+            }
+            s[index] = s[k];
+            s[index + 1] = num+'0';//注意这个+'0'非常重要!不这样会乱码！！！！！
+            index += 2;
+            i = i + num;
+        }
+    }
+    s[index] = '\0';
+}
+
+int main()
+{
+    char s[48];
+    cin >> s;
+   rebuild(s);
+    cout << s;
+}
+```
+
+
+
+## 3▲▲编程将字符串中空格字符换成%20，求出新字符串长度 
+
+[^]: 
+
+原字符串：my johh smith
+
+新：my%20johh%20smith17
+
+
+
+【思路】先求出原字符串空格个数以便得到新的长度，对于新字符串**从后向前扫描**（从前向后扫描会覆盖原来字符串）
+
+主函数中定义字符指针，分配足够空间，用strcpy得到原字符串
+
+- **！！！注意**：如果主函数中直接用s[]="my jogh smith"定义数组s,由于数组是固定的不会扩大，会导致程序崩溃。可以用s[max]="my jogh smith",效果一样。max为一个足够大的数字。
+
+```c++
+#define _CRT_SECURE_NO_WARNINGS//写在开头
+#include<string>
+#include<cstdio>
+#include<malloc.h>
+#include<string.h>
+
+int rebuild(char* s, int n)
+{
+    int num =0;
+    int b = n;
+    for (int i = 0; i < n; i++)
+    {
+        if (s[i] == ' ')
+            num++;
+    }
+    int newl = n + num * 2;//新字符串的长度
+    s[newl] = '\0';
+    int k = newl-1;//最大的下标为长度-1
+    for (int i = n-1; i >= 0; i--)
+    {
+       
+        if (s[i] == ' ')
+        {
+            s[k] = '0';
+            s[k - 1] = '2';
+            s[k - 2] = '%';
+            k -= 3;//逆着插入字符%20
+            
+
+        }
+        else if (s[i] != '\0')
+        {
+            s[k] = s[i];
+            k--;//复制原来的非空格内容到新字符串
+        }//注意K一直都大于等于i
+    }
+   
+    return newl;//新长度
+}
+int main()
+{
+    char* s = new char[100];
+    strcpy(s, "my johh smith");
+    int num = strlen(s);
+    int k = rebuild(s, num);
+    cout << s;
+
+    cout << k;
+
+}
+```
+
+
+
+
+
+```c++
+//判断一个字符串中是否所有字符都是唯一出现的，假设该字符串仅包含ASII字符
+//由于ASII字符编号为0-127，设定一个布尔类型的数组charset[i]，若当前字符p[i]的chareset[p[i]]为0表明是重复字符
+bool unique(char* p)
+{
+    bool charset[128]= { false };
+ 
+    for (int i = 0; p[i]; i++)
+    {
+        if (charset[p[i]])
+            return false;
+        else
+            charset[p[i]] = true;
+
+    }
+    return true;
+}
+
+   int main()
+{
+    char s[] = "abcd efgh";
+    
+   cout<< unique(s);
+
+
+
+}
+```
+
+## 4判断两个字符串的后n位是否相等
+
+```c++
+其中一个字符串给定 另外有一个结构体数组类似pb[i]={{"aberwt"},{"rewrtwe"},{"bcc"}...}
+//令结构体数组最后一个为{0}
+struct 
+{
+    char* name;
+}pb[10];
+void findi(char* s,int n)
+{
+    char* p;
+    int len = strlen(s);
+    s = s + len - n;//按后缀的n位匹配 取s的后n位
+    bool flag = false;
+    for (int i = 0; pb[i].name != 0; i++)
+    {
+        if (strlen(pb[i].name) < len)
+            continue;
+        else
+        {
+            p = pb[i].name;
+            p += strlen(pb[i].name) - n;//p的后n位
+        }
+        if (strcmp(s, p) == 0)
+        {
+            cout << "有匹配的";
+            flag = true;
+        }
+    }
+    if (!flag)
+        cout << "没有匹配";
+}
+int main()
+{
+    for(int i = 0;i < 10;i++)
+    {
+        pb[i].name = new char[20];//分配空间
+        cin >> pb[i].name;
+    }
+    char* s = new char[20];
+    cin >> s;
+    findi(s, 3);
+    delete[]s;
+    for (int i = 0; i < 10; i++)
+        delete[]pb[i].name;
+
+}
+```
+
+## 5//求一个字符串最大对称子串长度 如roorer长度为4
+
+```c++
+int maxsub(char* s)
+{
+    if (!s || s[1] == '\0')
+        return -1;  //空串或单个字符串返回-1
+    int len = strlen(s);
+    char* p = s + 1;
+    int manxlen = -1;
+    while (*p != '\0')
+    {
+        char* r = p + 1;
+        char* l = p - 1;
+        
+        while (l >= s && r < &s[len - 1] && *l == *r)//分别查找以p为中心的前后最大对称子串 如果为奇数个字符时如xyyayyx
+        {
+            l--;
+            r++;
+        }
+        if (r - l - 1 > manxlen)
+            manxlen = r - l - 1;
+
+         r = p;
+         l = p - 1;
+         while (l >= s && r < &s[len - 1] && *l == *r)//如果为偶数个字符时
+         {
+             l--;
+             r++;
+         }
+         if (r - l - 1 > manxlen)//r-l-1为当前对称子串长度
+             manxlen = r - l - 1;
+         p++;
+    }
+    return manxlen;
+}
+```
+
+## 6.两个字符串的最大子串
+
+```c++
+//编程找出两个字符串的最大公共子串，问什么情况下算法最优？
+//采用典型BF算法，找到第一个相等的字符后逐个比较
+//时间复杂度是o(m*n)最优情况是两个串相同时，时间复杂度为o(n)
+char* maxcomstr(char* s, char* r)
+{
+    int k,slen = 0,i = 0,maxlen = 0;
+    while(s[i])
+    {
+        int j = 0;//注意初始化j的位置 每次i移动一个字符后r都要从第一个字符开始扫描
+        while (r[j])
+        {
+            if (s[i] == r[j])
+            {
+                slen = 1;
+                while (s[i+slen] && r[j+slen] && s[i + slen] == r[j + slen])
+                    slen++;
+                if (slen > maxlen)
+                {
+                    maxlen = slen;
+                    k = i;
+                }
+                j += slen;//注意这一步中j的变化 要扫描r中剩余公共子串后面的内容
+                
+            }
+            else
+                j++;
+        }
+        i++;
+
+
+    }
+    char* str = new char[maxlen+1];
+    for (int m = 0; m < maxlen; m++)
+        str[m] = s[k + m];//将子串的字符复制到新串中
+    str[maxlen] = '\0';
+    return str;
+
+}
+
+int main()
+{
+    char* s = new char[30];
+    char* r = new char[30];
+    cin >> s >> r;
+    char* str = maxcomstr(s, r);
+    cout << str;
+
+}
+```
+
+## （未解决）一个字符串中子串出现次数
+
+```c++
+//一个字符串s查找子串t出现的次数
+int subcount(char* s, char* t)
+{
+    int count = 0, i = 0, len=0;
+    int len2 = strlen(s);
+    int m = strlen(t);
+    while (s[i]&&i<=len2 - m)//注意i的取值范围
+    {
+        int j = 0;
+       
+        if (s[i] = t[j])
+        {
+            int k = i;
+            while (s[i] && t[j] && s[i] == t[j])
+            {
+               
+                i++;
+                j++;
+                len++;               
+                
+            }
+            
+            if (j == m)
+            {
+                count++;
+              
+              
+            }
+           
+
+
+        }
+        else 
+        i++;
+    }
+    return count;
+}
+```
+
+## 7.编程求字符串通配符匹配的算法 
+
+```c++
+//t包含一个或多个*,*可以与s中0个或多个字符匹配 
+//如（“there are","*e*e")返回真
+bool subcount(char* s, char* t)
+{
+    int i = 0, j = 0, len = 0;
+    while (s[i] && t[j])
+    {
+        if (s[i] == t[j])
+        {
+            i++;
+            j++;
+        }
+        else if(t[j] == '*')
+        {
+            j++;
+            while(s[i] && s[i] != t[j])
+            {
+                i++;//连续跳过字符直到s中的字符与t再次相等
+            }
+        }
+        else
+        {
+            i = i - j + 1;
+            j = 0;
+        }
+    }
+    if (t[j] == '\0')
+        return true;
+    else
+        return false;
+}
+```
+
+
+
+## 8.统计一个字符串所有大写字母出现次数（只有大写）
+
+```c++
+void getnext(char* p,int count[])
+{ int i = 0;
+    int len = strlen(p);
+    while (i < len)
+    {
+        count[p[i] - 'A']++;//注意这种写法
+        i++;
+
+        
+    }
+
+}
+int main()
+{
+    char* s = new char[30];
+  //  char* r = new char[30];
+    cin >> s;
+    int num[26];
+    memset(num, 0, sizeof(num));//初始化的方法
+    getnext(s,num);
+    for (int i = 0; i < 26; i++)
+        cout <<(char)('A'+i)<<":"<< num[i] << " ";
+//强制转换输出ABCD..
+}
+```
+
+
+
+## 9.串置换函数与匹配函数
+
+```c++
+int index(char* s, char* t, int pos);
+void replace(char* s, char* t, char* v);//串置换函数 本题中感觉只能实现t与v大小一样时的置换
+
+
+int index(char* s, char* t, int pos)//串匹配函数 pos为从第pos个字符开始从S中寻找t出现的第一次位置 
+//注意第一个字符下标为0
+{
+	int iindex, s1, t1, k,j=1;
+	s1 = strlen(s);
+	t1 = strlen(t);
+	k = pos;
+	while(s[k])
+	{
+		if (s[k - 1] == t[j - 1])
+		{
+			while (s[k - 1] == t[j - 1]) { k++; j++; }
+			if (j > t1)
+				return k - t1 ;
+			else
+			{
+				k = k - j + 2;
+				j = 1;
+			}
+		}
+		else
+			k++;
+	}
+	return -1;
+}
+
+void replace(char* s, char* t, char* v)//s串中的t串换成v串
+{
+	
+	int s1, t1, v1, k, j,po,i;
+	s1 = strlen(s);
+	t1 = strlen(t);
+	v1 = strlen(v);
+	k = 0;
+	i = 0;
+	
+	while (k < s1 - t1 + 1)
+	{
+		po = index(s, t, k);
+		if (po == -1)
+			break;
+
+		else 
+		{
+			j = po - 1;
+			for (i = 0; i < v1 && s[i + v1]; i++)
+			{
+				s[j] = v[i];
+
+				j++;
+			}
+			k = po + t1;
+		}
+	}
+	
+}
+int main()
+{
+	
+	
+	char* s = new char[50];
+	char m[] ="you",  v[] = "***";
+	
+	cin >> s;
+
+	replace(s, m,v);
+	cout << s;
+	
+}
+```
+
+
+
+# 栈
+
+## 1.设计顺序栈 定义栈的数据结构
+
+```c++
+//设计顺序栈 其中data[]存放栈的元素，top为栈顶指针（初始为-1)添加一个getmin()函数能够得到栈的最小元素
+//设置一个辅助栈minidex[],它保存的是data[]中最小元素的下标，当栈空或者进栈元素val小于当前栈的最小元素时
+//将val的下标进minidex[]栈退栈时如果栈顶为最小元素，则下标从minidex[]退栈，否则不退栈
+class overflow{};//异常处理类
+#define maxsize 100
+class Stack {
+public:
+    Stack() :ttop(-1), minpos(-1) {};
+    int getmin();
+   int top();
+   int pop();
+   int push(int val);
+   bool isempty() {
+       return ttop == -1;
+   }
+   bool isfull() { return ttop == maxsize-1; }
+
+
+
+private:
+    int minn;
+    int ttop;
+    int data[maxsize];
+    int minidex[maxsize];
+    int minpos;
+};
+int Stack::getmin()
+{
+    if (isempty())
+        throw overflow();
+    return data[minidex[minpos]];//返回栈中最小元素 最小元素的下标是minidex[minpos]中的值
+}
+int Stack::top()
+{
+    if (isempty())
+        throw overflow();//如果为空抛出异常类
+    return data[ttop];
+
+}
+int Stack::push(int val)
+{
+    if (isfull())
+        throw overflow();
+    if (isempty() || val < getmin())
+    {
+        minpos++;
+        minidex[minpos] = ttop + 1;//如果栈空或者val小于进栈前最小值，将val的下标ttop+1放入栈minidex中
+       
+    }
+    ttop++;
+    data[ttop] = val;//这两句放在if语句的外面 元素val进栈
+    return ttop;
+}
+int Stack::pop()
+    {
+    if (isempty())
+        throw overflow();
+    int num = data[ttop];//保存元素值
+    if (ttop == minidex[minpos])//如果栈顶元素为最小元素 将其下标从minidex中退栈
+        minpos--;
+    ttop--;//栈顶元素退栈
+    return num;
+        
+
+    }
+
+```
+
+**注意:由于STL的stack栈容器不能顺序遍历，有些算法需要顺序遍历栈时可以用数组或者链表放栈元素，并设计相应的栈运输算法，即自己实现栈或复制创建一个临时栈再对临时栈的元素退栈遍历**
+
+
+
+## 2.一个算法删除栈中所有元素e保持其他元素次序不变
+
+```c++
+#include<stack>
+``
+void dele(stack<int>& st, int e)
+{
+    stack<int>ioo;
+    int num;
+    while (!st.empty())
+    {
+        num = st.top();
+        if(num != e)
+        ioo.push(num);
+        st.pop();
+    }
+    while (!ioo.empty())
+    {
+        num = ioo.top();
+        ioo.pop();
+        st.push(num);
+    }
+}
+```
+
+## 3.//将一个栈从栈顶到栈底递增排序 利用辅助栈
+
+```c++
+void sorta(stack<int>&st)
+{
+    stack<int>stlm;//辅助栈
+    
+    while (!st.empty())
+    {
+        int a = st.top();
+        st.pop();
+        while (!stlm.empty() && a > stlm.top())
+        {
+            st.push(stlm.top()); stlm.pop();//退栈stlm中大于a的元素并进St栈
+        }
+        stlm.push(a);
+    }
+    while (!stlm.empty())
+    {
+        st.push(stlm.top());//所有辅助栈元素进入原栈
+        stlm.pop();
+    }
+}
+```
+
+
+
+
+
+## 4.寻找一个数组下一个更大的元素 若无更大的则为-1.（输出下一个更大的）
+
+```c++
+void findneg(int a[], int n)
+{
+    stack<int>st;
+    st.push(a[0]);
+    for (int i = 1; i < n; i++) 
+    {
+        int ttop = st.top();
+
+        while (!st.empty() && ttop < a[i])
+        {
+            cout << st.top() << "->" << a[i]<<",";
+            st.pop();
+            if (!st.empty())
+                ttop = st.top();
+
+        }
+        st.push(a[i]);
+    }
+    while (!st.empty())
+    {
+        cout << st.top() << "->" << -1;
+        st.pop();
+    }
+}
+
+
+
+
+int main()
+{
+    int a[5] = { 4,5,2,25,26 };
+    findneg(a, 5);
+
+}
+```
+
+## 5.//设输入序列是1，2，。。n 判断能否通过一个栈得到num[0...n-1]指定的出栈序列
+
+```c++
+bool validseq(int num[], int n)
+{
+	stack<int>st;
+	int i, k = 0, e;
+	for (i = 1; i <= n; i++)
+	{
+		st.push(i);
+		while (!st.empty())
+		{
+			e = st.top();
+			if (num[k] == e)
+			{
+				st.pop();
+				cout << e;
+				k++;
+
+			}
+			else
+				break;//不匹配时退出while循环
+		}
+	}
+	if (st.empty())
+		return true;
+	else
+		return false;
+}
+```
+
+## 6.所有出栈序列
+
+
+
+![](C:\Users\14172\Pictures\115.jpg)
+
+![](C:\Users\14172\Pictures\116.jpg)
+
+![image-20201105134316959](C:\Users\14172\AppData\Roaming\Typora\typora-user-images\image-20201105134316959.png)
+
+
+
+
+
+```c++
+//以字符序列abcd作为栈st的输入，利用出栈操作输出所有可能的序列
+//递归模型
+
+
+char c[] = "abcd";
+int total = 4;
+#define maxsize 10
+stack<int>st;
+int count1 = 0;
+
+void process(int m, int a[], int k)
+{
+	if (m == total && st.empty())
+	{
+		for (int i = 0; i < k; i++)
+			cout << c[a[i]];//输出a的元素序列 构成一种出栈序列
+		cout << endl;
+		count1++;
+	}
+	//两种递归的情况
+	if (m < total)
+	{
+		st.push(m);
+		process(m + 1, a, k);
+		st.pop();
+	}
+	if (!st.empty())
+	{
+		int num = st.top();
+		st.pop();
+		a[k] = num;
+		process(m, a, k + 1);
+		st.push(num);
+	}
+}
+int main()
+{
+	cout << "所有出栈序列\n";
+	int a[10];
+	process(0, a, 0);
+	cout << "出栈序列个数" << count1;
+}
+
+```
+
+## 7.序列括号是否合法
+
+```c++
+//序列括号[]{}() 判断一个括号序列是否合法 如([])合法
+bool match(char* exp)
+{
+	stack<int>st;
+	int i = 0;
+	while (exp[i])
+	{
+		if (exp[i] == '[' || exp[i] == '{' || exp[i] == '(')
+			st.push(exp[i]);
+		else
+			if (st.empty())
+				return false;
+			else
+			{
+				if (exp[i] == '}')
+				{
+					char m = st.top();
+					if (m != '{')
+						return false;
+					else
+						st.pop();
+				}
+				if (exp[i] == ']')
+				{
+					char m = st.top();
+					if (m != '[')
+						return false;
+					else
+						st.pop();
+				}
+				if (exp[i] == ')')
+				{
+					char m = st.top();
+					if (m != '(')
+						return false;
+					else
+						st.pop();
+				}
+
+			}
+		i++;
+	}
+	return st.empty();//为空则匹配
+}
+```
+
+## 8.//求一个只含()括号的序列exp最长的有效括号串
+
+```c++
+//设最长有效括号串是exp[lastpos-maxlen+1,lastpos]子串，扫描所有字符，将左括号的位置进栈 last记录没有匹配的右括号的位置
+//当扫描到')'若栈空 则令last = i,否则退栈，e为当前匹配的括号对的前一个左括号位置表示exp[e+1,i]是一个匹配序列
+
+void maxmatch(char* exp, int& maxlen, int& lastpos)
+{
+	stack<int>st;
+	int last = -1, e;
+		maxlen = 0;
+	for (int i = 0; exp[i]; i++)//扫描字符串
+	{
+		
+		if (exp[i] == '(')
+		{
+			st.push(i);
+		}
+		else if (exp[i] == ')')
+		{
+			if (st.empty())
+				last = i;//栈空，没有匹配的左括号 last记录没有匹配的右括号的位置
+			else {
+				st.pop();
+				if (st.empty())
+				{
+
+
+
+					if (maxlen < i - last)//栈空时exp[last+1,..i]是一个匹配序列
+					{
+						maxlen = i - last;
+						lastpos = i;
+					}
+				}
+				else
+				{
+					e = st.top();
+					if (maxlen < i - e)//栈非空时exp[e+1,..i]是一个匹配序列
+					{
+						maxlen = i - e;
+						lastpos = i;
+					}
+				}
+			}
+		}
+	}
+}
+void display(char* p, int maxlen, int lastpos)
+{
+	for (int i = lastpos-maxlen+1; p[i]; i++)
+	{
+		cout << p[i];
+	}
+}
+int main()
+{
+	char *r = new char[20];
+	cin >> r;
+	int maxlen ,lastpos = 0;
+	maxmatch(r,maxlen,lastpos);
+	display(r,maxlen,lastpos);//在主函数中给lastpos赋初值
+```
+
+
+
+## 9.用栈实现迷宫
+
+```c++
+#define maxsize 7
+int v[4] = { 0,1,0,-1 };//水平偏移量 下标对应方位号0~3
+int h[4] = { -1,0,1,0 };//竖直偏移量
+char maze[maxsize][maxsize] = {
+    { 'X','X','X','X','X','X','X'},
+    {'O','O','O','O','X','X','X' },
+    {'O','O','X','O','X','X','X' },
+    {'O','O','O','O','O','X','X' },
+    {'O','X','X','O','O','O','X' },
+    {'X','O','O','O','X','O','O' },
+    {'O','O','O','O','X','X','O' },
+
+
+};
+typedef struct {
+    int x;
+    int y;
+    int di;//下一个相邻可走方块的方位号
+}box;
+bool findpath(int x, int y)
+{
+    stack<box>st;
+    int i, j, i1, j1, k, di=-1;
+    box e;//一个方块
+    bool finn;
+    e.x = x;
+    e.y = y;
+    e.di = -1;
+    maze[x][y] = ' ';//入口方块进栈
+    st.push(e);//推一个方块进入栈
+    while (!st.empty())
+    {
+        e = st.top();
+        di = e.di;
+        i = e.x;
+        j = e.y;
+        if (e.x == maxsize - 1 && e.y == maxsize - 1)//找到一条路径
+        {
+            for (i = 0; i < maxsize; i++)
+            {
+                for (j = 0; j < maxsize; j++)
+                    cout << maze[i][j];
+                cout << endl;
+            }
+            return true;
+        }
+        else
+        {
+           
+            finn = false;
+            for (k = 1 + di; k <= 3; k++)
+            {
+                i1 = i + v[k];
+                j1 = j + v[k];
+                
+                if (i1>=0 && i + v[k] < maxsize && j + h[k] < maxsize && maze[i + v[k]][j + v[k]] == 'O')
+                {
+                    st.top().di = k;//修改原栈顶元素di为-1
+                    e.x = i + v[k];
+                    e.y = j + h[k];
+                    e.di = -1;//新块的di为-1
+                    st.push(e);//找到一个可走的相邻方块 推入栈
+                    finn = true;
+                    break;
+                 }
+              
+                
+            }
+            if (finn)
+            {
+                maze[i1][j1] = ' ';
+            }
+            else
+            {
+                st. pop();
+                maze[i][j] = '0';//恢复退栈方块的迷宫值
+            }
+
+        }
+    }
+    return false;
+}
+int main()
+{
+    int x = 6, y = 6,j;
+    if (maze[x][y] != 'O' || maze[maxsize - 1][maxsize - 1] != 'O')
+        cout << "入口或者出口不可走\n";
+    else
+    {
+        bool np = findpath(x, y);           
+        if (!np)
+            cout << "没有路径";
+    }
+}
+```
+
+## 10.中缀表达式变后缀
+
+```c++
+#include <iostream>
+#include<stack>
+
+using namespace std;
+
+void trans(char* exp, char* post)
+{
+    stack<char>st;
+    int k = 0;
+    while (*exp)
+    {
+        switch (*exp)
+        {
+        case '(':
+            st.push(*exp);
+            exp++;
+            break;
+        case ')':
+            while (!st.empty() && st.top() != '(')
+            {
+                post[k++] = st.top();
+                st.pop();
+            }
+            st.pop();//弹出“（”符号
+            exp++;
+            break;
+        case '+':
+        case '-':
+            while (!st.empty())
+            {
+                if (st.top() != ')')
+                {
+                    post[k++] = st.top();//若栈顶不是（则将栈顶放入post中
+                    st.pop();//出栈
+                }
+                else
+                    break;//如果栈顶元素是'('时退出循环
+            }
+            st.push(*exp);
+            exp++;
+            break;
+        case '*':
+        case '/':
+            while (!st.empty())
+            {
+                if (st.top() == '*' || st.top() == '/')
+                {
+                    post[k++] = *exp;
+                    st.pop();
+                }
+                else
+                    break;
+            }
+            st.push(*exp);
+            exp++;
+            break;
+
+        default:
+            while (*exp >= '0' && *exp <= '9')
+            {
+                post[k++] = *exp;
+                exp++;
+
+            }
+            post[k++] = '#';//用#标识一个数字串结束 比如32这样的多位数
+        }
+    }
+    while (!st.empty())//将运算符放入post中
+    {
+        post[k++] = st.top();
+        st.pop();
+    }
+    post[k] = '\0';//给post表达式添加结束符
+}
+double comppost(char* post)//计算后缀表达式的值
+{
+    double a, b, c;
+    stack<double>st;
+    while (*post)
+    {
+        switch (*post)
+        {
+        case '+':
+            a = st.top(); st.pop();
+            b = st.top(); st.pop();
+            c = a + b;
+            st.push(c);
+            break;
+        case '-':
+            a = st.top(); st.pop();
+            b = st.top(); st.pop();
+            c = b - a;
+            st.push(c);
+            break;
+        case '*':
+            a = st.top(); st.pop();
+            b = st.top(); st.pop();
+            c = a * b;
+            st.push(c);
+            break;
+        case '/':
+            a = st.top(); st.pop();
+            b = st.top(); st.pop();
+            if (a == '0')
+            {
+                cout << "error!";
+                exit(1);
+            }
+            else
+            c = b / a;
+            st.push(c);
+            break;
+        default:
+            double d = 0;
+            while(*post >= '0' && *post <= '9')
+            {
+                d = d * 10 + *post - '0';
+            post++;
+            }
+            st.push(d);
+            break;
+        }
+        post++;
+    }
+    return st.top();
+}
+
+```
+
+## 11.提供另一种基本运算peekmedian 返回栈的中位值
+
+```c++
+//提供另一种基本运算peekmedian 返回栈的中位值 如果N是奇数 返回第（N+1)/2个最小元素
+//用string代表输入的命令
+//求中位数用vector数组维护 该数组用升序排列
+using namespace std;
+int N;//N个正整数 一共显示N行 每行是一种操作命令
+stack<int>st;
+vector<int>myv;
+
+
+void pushest(int key)//进栈元素key的操作
+{
+    st.push(key);
+    int e, count = 0;
+    if (myv.size() == 0)//先考虑如果数组无数据的情况
+        myv.push_back(key);
+    else
+    {
+        while(myv.back()>key)//先删除所有尾部大于key的元素 让这些元素进入栈中
+           
+            {
+            st.push(myv.back());
+                myv.pop_back();
+                
+                count++;//计数 计入一共多少个这样的元素
+            }
+        myv.push_back(key);//现在添加key到数组中
+        for (int i = 0; i < count; i++)
+        {
+            e = st.top();
+            myv.push_back(e);//将原来的元素再次进入数组中栈恢复原状
+            st.pop();
+        }
+    }
+
+}
+void popst()//出栈操作
+{
+    int e,count=0;
+    if (st.empty())
+    {
+        cout << "invalid" << endl;
+        return;
+    }
+
+    e = st.top();
+    cout << e<< endl;
+    st.pop();
+    while (myv.back() != e)
+    {
+        st.push(myv.back());
+        myv.pop_back();//先删除数组中所有不为栈顶元素的数据
+        count++;
+    }
+    myv.pop_back();//myv删除该元素
+    for (int i = 0; i < count; i++)
+    {
+        e = st.top();
+        myv.push_back(e);//将原来的元素再次进入数组中
+        st.pop();
+    }
+}
+void peekmedian()
+{
+    int key;
+    if (st.empty())
+        cout << "invalid" << endl;
+    else
+    {
+        int n = st.size();
+        if (n % 2 == 0)
+        {
+            cout << myv[n / 2-1] << endl;
+
+        }
+        else
+            cout << myv[(n + 1) / 2-1]<<endl;//奇数个元素时
+    }
+}
+
+
+int main()
+{
+ 
+    string command;
+    int key;
+    cin >> N;
+    while (N--)
+    {
+        cin >> command;
+        if (command == "push")
+        {
+            cin >> key;//注意必须是push 8这样的格式 中间要空格
+            pushest(key);
+        }
+        else if (command == "pop")
+        {
+            popst();
+        }
+        else
+            peekmedian();
+    }
+}
+```
+
+## 12.求一个直方图的最大矩形面积
+
+```c++
+#define max(a,b) (a) > (b)?(a):(b)
+using namespace std;
+//求一个直方图的最大矩形面积 令每个矩形宽度为1 以i[矩形i的高度]表示一个矩形 栈空或输入矩形的高度大于栈顶
+//将i进栈 hei栈中储存的是下标 第一个下标是0
+int maxarea(vector<int>height)
+{
+	stack<int>hei;
+	int toparea,maxarea = 0;//先将最大面积初始化为0
+	
+	int i = 0;
+	height.push_back(0);
+	while (i < height.size()) {
+		if (hei.empty() || height[i] > height[hei.top()])
+			hei.push(i++);
+		else
+		{
+			int tem = hei.top();
+			hei.pop();
+			toparea = height[tem] * (hei.empty()?i:(i - hei.top() - 1));//注意这一步的写法 要判断栈是否为空
+			maxarea = max(maxarea, toparea);
+		}
+	}
+	return maxarea;
+}
+
+int main()
+{
+	int a[] = { 6,2,5,4,5,1,6 };
+	int n = sizeof(a) / sizeof(a[0]);
+	vector<int>height(a, a + n);//注意这种初始化的方法
+	cout << maxarea(height);
+  
+}
+```
+
+## 13.判断能否通过一个栈得到指定的排列
+
+注意：num的数据不能超过N
+
+例如有五个数的排列则不能超过5 且不等于0
+
+如2 1 5 4 3 可以通过栈得到 （栈的输入顺序是1，2，3...N)
+
+```c++
+//输入一个正整数序列1，2，3.。。n，判断能否通过一个栈得到指定的排列（排列由键盘输入）
+int main()
+{
+	int i, N;
+	stack<int>st;
+	int num[105];
+	int k = 1;
+	while (cin>>N && N)
+	{
+		for (i = 1; i <= N; i++)
+			cin >> num[i];
+		for (i = 1; i <= N; i++)
+		{
+			st.push(i);
+			while (!st.empty()&&st.top() == num[k])
+			{
+				k++;
+				st.pop();
+			}
+		}
+		if (st.empty())
+			cout << "yes";
+		else
+			cout << "no";
+	}
+  
+}
+```
+
+## 14.输入n个矩阵的维度和一些矩阵链乘表达式，输出乘法的次数。
+
+```c++
+//如果乘法无法进行，输出error。假定A是m*n矩阵，B是n*p矩阵，//那么AB是m*p矩阵，乘法次数为m*n*p。如果A的
+//列数不等于B的行数，则乘法无法进行。
+//例如，A是50*10的，B是10*20的，C是20*5的，则(A(BC))的乘法次数为10*20*5（BC的
+//乘法次数）+ 50*10*5（(A(BC))的乘法次数）= 3500。
+   // 自己写的：
+struct Matrix {
+	int row, col;
+	Matrix(int row = 0, int col = 0) :row(row), col(col) {}
+} m[26];
+
+int main()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		cin >> m[i].row >> m[i].col;
+	}
+	stack<Matrix>st;
+	string ex;
+	cin >> ex;
+	int i = 0,sum=0;
+	while (ex[i] != '\0')
+	{
+		while (ex[i] == '(')
+			i++;
+		while(ex[i]>='A'&&ex[i]<='Z')
+		{
+			st.push(m[ex[i]-'A']); i++;
+		}
+		if(ex[i] == ')')
+			
+			{
+				int m = st.top().col;
+				st.pop();
+				int n = st.top().row;
+				
+				sum += m * n*st.top().col;
+				st.pop();
+				i++;
+				Matrix mat(n, m);
+				st.push(mat);
+			}
+
+
+	}
+	cout << sum;
+	}
+
+```
+
+书上的：
+
+```c++
+struct Matrix {
+int a, b;
+Matrix(int a=0, int b=0):a(a),b(b) {}
+} m[26];
+stack<Matrix> s;
+int main() {
+int n;
+cin >> n;
+for(int i = 0; i < n; i++) {
+string name;
+cin >> name;
+int k = name[0] - 'A';
+cin >> m[k].a >> m[k].b;
+}
+string expr;
+while(cin >> expr) {
+int len = expr.length();
+bool error = false;
+int ans = 0;
+for(int i = 0; i < len; i++) {
+if(isalpha(expr[i])) s.push(m[expr[i] - 'A']);
+else if(expr[i] == ')') {
+Matrix m2 = s.top(); s.pop();
+Matrix m1 = s.top(); s.pop();
+if(m1.b != m2.a) { error = true; break; }
+ans += m1.a * m1.b * m2.b;
+s.push(Matrix(m1.a, m2.b));
+}
+}
+if(error) printf("error\n"); else printf("%d\n", ans);
+}
+return 0;
+}
+```
+
+
+
+# 树
+
+```
+
+```
+
+
+
+```
+
+```
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-13.png)
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-13 (1).png)
+
+## 基础![]知识
+
+前序和中序或者后序和中序序列可以唯一确定一棵二叉树。后序遍历:左子树 右子树 根结点。用数组存储即顺序存储
+
+中序遍历中最开始结点是根结点最左下结点 最后结点是根结点最右下结点，后序遍历最开始一定是叶节点，最后一定是根节点
+
+## 伪语言:递归建立二叉树
+
+```c++
+tree* create()//递归建立二叉树算法
+{
+    tree* node;
+    elemtype x;
+    cin >> x;
+    if x == 0; node = null;
+    else 
+    {
+        node = new tree; node.data = x;
+        p.left->create();
+        p.right->create();//递归调用自身
+    }
+    return node;
+}
+```
+
+
+
+## 1.求一个二叉树某个结点所在子树一共包括多少结点
+
+![](C:\Users\14172\Pictures\009.jpg)
+
+```c++
+//设编号为m的结点子树共k层 有k=[log2(n/m)+1] (大于log2(n/m)+1的最小正整数）在m结点的子树的第k层中第一个结点编号为2的k-1次方*m 它是整个
+//二叉树的最后一层 所以该结点及其后面的结点个数为tmp=n - pow(2, k - 1) * m + 1;，
+//而属于m结点的子树结点最多pow(2,k-1)个 若tmp<pow(2,k-1)说明m结点的子树不是满的（前k-1层是满的）一共pow(2,k-1)-1个结点
+//若相等 则是满的
+int getnode(int n, int m)
+{
+	int result;
+	int k = int(log(1.0 * n / m) / log(2.0)) + 1;
+	int tmp = n - pow(2, k - 1) * m + 1;
+	if (tmp < pow(2, k - 1))
+		result = pow(2, k - 1) + tmp - 1;
+	else
+		result = pow(2, k);
+	return result;
+
+}
+int main()
+{
+	int m, n;
+	while (true)
+	{
+		cin >> n >> m;
+		if (m == 0 && n == 0)
+			break;
+		cout << getnode(n, m);
+
+	}
+```
+
+递归方法:
+
+```c++
+int getnode(int n, int m)//递归方法 设左孩子编号2m(如果 存在）右孩子编号2m+1(若存在）
+{
+	if (2 * m > n)//左孩子不存在 只有m结点一个
+		return 1;
+	else if (2 * m + 1 > n)//右孩子不存在 有两个结点
+		return 2;
+	else
+		return getnode(n, 2 * m) + getnode(n, 2 * m + 1) + 1;//递归
+
+}
+```
+
+
+
+## 2.递归遍历算法 假设二叉树 采用二叉链存储结构存储
+
+
+
+```c++
+//递归算法求从根结点到值为X的结点路径 若无 则返回false
+typedef struct node {
+	char data;
+	struct node* lchild;
+	struct node* rchild;//指向右孩子结点
+}btnode;
+void display(vector<char>& path)//输入路径的所有元素
+{
+	vector<char>::iterator it;
+	for (it = path.begin(); it != path.end(); it++)
+		cout << *it;
+	cout << endl;
+}
+bool findpath(btnode* b, char x, vector<char>tmppath, vector<char>& path)//大问题
+{
+	//tmppath存放临时路径 path存放二叉链b中从根结点到值为x的结点路径path 
+	if (b == nullptr) return false;
+	else if (b->data == x)
+	{
+		tmppath.push_back(x);
+		path = tmppath;
+		return true;
+	}
+	else
+	{
+		tmppath.push_back(b->data);
+		bool flag = findpath(b->lchild, x, tmppath, path);//分别在左右子树中查找路径 是小问题
+		if (flag)
+			return true;
+		else
+			return findpath(b->rchild, x, tmppath, path);
+	}
+}
+
+```
+
+## 3.层次遍历算法（队列实现）寻找从根结点到值x的结点路径
+
+利用队列一层一层访问二叉树的所有结点
+
+假设二叉树用二叉链存储结构存储（所有结点值为单个字符且不同）
+
+输出路径
+
+```c++
+typedef struct node {
+	char data;
+	struct node* lchild;
+	struct node* rchild;
+}btnode;
+typedef struct {
+	btnode* node;//存放当前结点指针
+	int parent;//存放双亲结点在队列中的位置
+}qytype;//定义非循环队列元素类型
+void display(qytype qy[],int front)//输入路径的所有元素
+{
+	int p = front;
+	vector<char>path;
+	while (qy[p].parent != -1)//在qy中搜索逆路径并存放到path中
+	{
+		path.push_back(qy[p].node->data);
+		p = qy[p].parent;//p前移
+	}
+	path.push_back(qy[p].node->data);//根结点的元素存放到path中 是path的最后一个元素
+	vector<char>::reverse_iterator it;
+	for (it = path.rbegin(); it != path.rend(); it++)
+		cout << *it;//反向遍历 输出从根结点到值为x的结点
+}
+bool findpath(btnode* b, char x)//大问题 二叉链b中寻找从根结点到值x的结点路径
+{
+	qytype qu[100];//定义非循环队列
+	int front, rear;
+	front = rear = -1;
+
+	if (b == nullptr) return false;
+	
+		rear++;
+		qu[rear].node = b;//根结点指针入队
+		qu[rear].parent = -1;//根结点没双亲结点
+		while (front != rear)
+		{
+			front++;
+			b = qu[front].node;//取出队头
+			if (b->data == x)
+			{
+				display(qu, front);
+				return true;
+			}
+			if(b->lchild != NULL)//左孩子结点进队
+			{SS
+				rear++;
+				b->lchild->data = x;
+				qu[rear].node = b->lchild;
+				qu[rear].parent = front;
+			}
+			if (b->lchild != NULL)//右孩子结点进队
+			{
+				rear++;
+				b->rchild->data = x;
+				qu[rear].node = b->rchild;
+				qu[rear].parent = front;
+			}
+
+	}
+		return false;
+		
+}
+```
+
+### 3.1层次遍历输出所有结点（自定义队列)
+
+```c++
+//层次遍历输出各个层次的结点 层次遍历中结点是一层一层处理，结点进队时记录其层次lno,根结点为第一层，h=1,队不空时循环
+//如果层次等于H则存入lnode数组，否则输出lnode数组为上一层结点，将lnode清空，处理第h+1层 p结点进队
+typedef struct node {
+	char data;
+	struct node* lchild;
+	struct node* rchild;
+}btnode;
+typedef struct {
+	btnode* m;
+	int lno;
+}qutype;//定义队列
+
+void leveloutput(btnode* b)
+{
+	queue<qutype>qu;
+	qutype e, e1;
+	btnode* p;
+	char lnode[50];//存放一层的所有结点 即data
+	int h, k=0;
+	if (b == nullptr) return;
+	e.m = b;
+	e.lno = 1;//lno为层次 根结点第一层 h=1
+	qu.push(e);
+	h = 1;//开始为第一次
+	while (!qu.empty())
+	{
+		e = qu.front(); qu.pop();
+		p = e.m;
+		if (e.lno == h)//如果该结点属于第h层 将其数据存入lnode中
+		{
+			lnode[k] = p->data;
+			k++;
+		}
+		else
+		{
+			for (int i = 0; i < k; i++)
+				cout << lnode[i];//如果不属于 则输出上一层的所有结点并且清空lnode 将该数据作为第h+1层的第一个元素
+			k = 0; h++;
+			lnode[k] = p->data;
+			k++;
+		}
+		if (p->lchild != nullptr)
+		{
+			e1.m = p->lchild;//p结点有左孩子 进队
+			e1.lno = e.lno + 1;
+			qu.push(e1);
+		}
+		if (p->rchild != nullptr)
+		{
+			e1.m = p->rchild;//p结点有右孩子 进队
+			e1.lno = e.lno + 1;
+			qu.push(e1);
+		}
+
+			
+	}
+	for (int i = 0; i < k; i++)//最后输出最后一层所有结点
+		cout << lnode[i]<<" ";
+}
+
+int main()
+{
+	
+	btnode* p=new btnode,*a = new btnode,*b = new btnode,*c = new btnode,*f = new btnode;
+	p->data = 'A';
+	p->lchild = a;
+	a->data = 'G';
+	p->rchild = b;
+	b->data = 'C';
+	a->lchild = c;
+	c->data = 'Q';
+	a->rchild = nullptr;
+	c->lchild = c->rchild = nullptr;
+	b->lchild = f;
+	f->data = 'M';
+	f->lchild = f->rchild = nullptr;
+	b->rchild = nullptr;
+	leveloutput(p);
+	
+
+}
+
+```
+
+### 3.2/设计算法假设采用二叉链结构 一次遍历求出不同种类结点个数
+
+```c++
+/先序中序后序都可
+int n0 = 0, n2 = 0, n1 = 0, nr = 0;
+void count(btnode* p)
+{
+	if (p->lchild != nullptr)
+	{
+		if (p->rchild != nullptr) n2++;
+		else
+			n1++;
+	}
+	else if (p->rchild != nullptr)
+	{
+		nr++;
+	}
+	else
+		n0++;
+	if (p->lchild != nullptr) count(p->lchild);
+	if (p->rchild != nullptr) count(p->rchild);
+}
+
+```
+
+### 3.3设计算法判断二叉树b的先序和中序序列是否相同
+
+```c++
+//采用先序遍历非递归和层次遍历同步进行，一旦结点不同，就返回false
+bool prelevel(btnode* b)
+{
+	btnode* p,*m;
+	stack<btnode*>st;
+	queue<btnode*>qu;
+	st.push(b);
+	qu.push(b);
+	while (!qu.empty() && !st.empty())//都不空时循环
+	{
+		p = st.top();
+		m = qu.front();
+		st.pop(); qu.pop();
+		if (p->data != m->data)
+			return false;
+		if (p->rchild != nullptr)st.push(p->rchild);//注意顺序不一样 对于栈先右孩子再左孩子
+		if (p->lchild != nullptr)st.push(p->lchild);//如果p结点有左孩子 进栈
+	
+			if (m->lchild != nullptr)qu.push(m->lchild);
+			if (m->rchild != nullptr)qu.push(m->rchild);
+	}
+	return true;
+}
+```
+
+### 3.4//求二叉树b中结点值为x的结点层次
+
+```c++
+//先序遍历的递归方法
+int level(btnode* b, char x, int h)//调用时h初始为1
+{
+	int h1, h2;
+	if (b == nullptr)return 0;
+	
+	else if (b->data == x)return h;
+
+	else {
+		cout << b->data << " ";
+		h1 = level(b->lchild, x, h + 1);
+		if (h1 != 0)//找到了
+			return h1;
+		else //左子树没找到 右子树找
+			return (level(b->rchild, x, h + 1));
+	}
+}
+
+btnode* b = new btnode;
+	btnode* a = new btnode;
+	btnode* b2 = new btnode;
+	btnode* b3 = new btnode;
+	btnode* b4 = new btnode;
+	btnode* b5 = new btnode;
+	btnode* b6 = new btnode;
+	a->data = '1';
+	b->data = '2';
+	b2->data = '3';
+	b3->data = '4';
+	b4->data = '5';
+	b5->data = '6';
+	b6->data = '7';
+	a->lchild = b;
+	a->rchild = b2;
+	b->lchild = b3;
+	b->rchild = b6;
+	b3->lchild = b4;
+	b3->rchild = b5;
+	b4->lchild = b4->rchild = b5->lchild = b5->rchild = NULL;
+	b6->lchild = b6->rchild = NULL;
+	b2->lchild = b2->rchild = NULL;
+	int mm = level(a, '5', 1);
+	cout << mm;
+
+```
+
+### 3.5求非空二叉树高度并求出层次最大的结点
+
+```c++
+int height(btnode* b, char& x)
+{
+	if (b == nullptr) return 0;//空树
+	else if (b->lchild == nullptr && b->rchild == nullptr) { x = b->data; return 1; }//叶子结点
+	else {
+		char x1, xr;
+		int h1, h2;
+		if (b->lchild != nullptr)
+			 h1 = height(b->lchild, x1);//左子树高度及其最大层次结点
+		if (b->rchild != nullptr)
+			h2 = height(b->rchild, xr);
+		if (h1 > h2) {
+			x = x1;
+			return h1 + 1;
+		}
+		else {
+			x = xr;
+			return h2 + 1;
+		}
+
+	}
+
+}
+```
+
+
+
+## 4.经典的用栈实现先序遍历非递归
+
+```c++
+using namespace std;
+//二叉链：令二叉树的每一个结点对应一个链表结点 链表结点中存放数据信息和左右孩子的指针
+//假设二叉树采用二叉链存储 设计先序遍历非递归算法
+//经典的用栈实现先序遍历非递归 栈中存放未访问的结点 在出栈时访问
+typedef struct node {
+	char data;
+	struct node* lchild;
+	struct node* rchild;
+}btnode;
+void pretra1(btnode* b)
+{
+	btnode* p = b;
+	stack<btnode*>st;
+
+	
+	if (p != nullptr)
+	{
+		st.push(p);//根进栈
+		while (!st.empty())
+		{
+			p = st.top();//修改p
+			cout << p->data;
+			st.pop();
+			if (p->rchild != nullptr)
+				st.push(p->rchild);
+			if (p->lchild != nullptr)
+				st.push(p->lchild);//先进右孩子结点再将左孩子结点进栈
+		
+		}
+	}
+}
+//解法2：栈中存放已经访问的结点 沿着根结点左下方一边访问一边进栈
+void pretra2(btnode* b)
+{
+	btnode* p = b;
+	stack<btnode*>st;
+
+	while (p != nullptr && !st.empty())
+	{
+		while (p != nullptr)//先将所有左结点全部进栈 注意这一步循环的条件是p!=null而不是p.lchild!=null
+		{
+			cout << p->data;//访问结点p			
+			st.push(p);
+			p = p->lchild;//P变为左下结点 如果左下结点为空将退出循环继续进行出栈转向右子树
+		}
+		if (!st.empty())//栈不空 出栈并转向右子树 并没有在这一步进行访问操作 也没有进行进栈
+		{
+			p = st.top();
+			st.pop();
+			p = p->rchild;
+		}
+	}
+}
+
+```
+
+
+
+## 5.morris算法先序遍历非递归
+
+```c++
+void pretrav3(btnode* p)//morris算法先序遍历非递归
+{
+	btnode* b = p;
+	btnode* node, *prev;
+	
+	while (b != nullptr)
+	{
+	
+
+		if (b->lchild == nullptr)
+		{
+			cout << b->data;
+			prev = b;//prev指向刚刚访问的结点
+			b = b->rchild;//转向右子树
+		
+		}
+		else
+		{
+			node = b->lchild;//左子树中找最右下结点
+			while (node->rchild != nullptr && node->rchild !=b)
+				node = node->rchild;
+			if (node->rchild == nullptr)//如果node没有右孩子表示没有线索化 建立新线索
+			{
+				cout << b->data;
+		
+				prev = b;//指向刚刚访问的结点
+				node->rchild = b;
+				b = b->lchild;//继续指向左结点
+			}
+			else//如果有右孩子则已经线索化 删除线索
+			{
+				node->rchild = nullptr;//恢复为空
+				b = b->rchild;//继续转向右子树
+			}
+		}
+	}
+}
+```
+
+
+
+![](C:\Users\14172\Pictures\98.jpg)
+
+![](C:\Users\14172\Pictures\99.jpg)
+
+## 6.中序遍历非递归
+
+```c++
+void pretrav3(btnode* p)
+{
+	stack<btnode*>st;
+	btnode* b = p;
+
+	while (b != nullptr || !st.empty())
+	{
+		while (b != nullptr)
+		{
+			st.push(b);
+			b = b->lchild;
+		}
+		if (!st.empty())
+		{
+
+			cout << st.top()->data;
+		
+			b = st.top()->rchild;
+			st.pop();
+		}
+	}
+
+	
+}
+```
+
+## 7.//后序遍历非递归
+
+```c++
+void pretrav3(btnode* p)
+{
+	stack<btnode*>st;
+	btnode* b = p,*q;
+	do {
+		while (b != nullptr)//左下结点进栈
+		{
+			st.push(b);
+			b = b->lchild;
+		}
+		q = nullptr;
+		while (!st.empty())
+		{
+			b = st.top();//取栈顶
+			if (b->rchild == q)//如果右孩子为空或者已经遍历
+			{
+				
+				cout << st.top()->data;
+				st.pop();
+				q = b;
+
+			}
+			else//如果右子树没有遍历则进行遍历
+			{
+				b = b->rchild;
+				break;
+			}
+		}
+	} while (!st.empty());
+	
+}
+```
+
+## 8.小球从结点1处依次开始下落，最后一个小球将会落到哪里呢？
+
+一些小球从结点1处依次开始下落，最后一个小球将会落到哪里呢？输入叶子深度D和 小球个数I，输出第I个小球最后所在的叶子编号。假设I不超过整棵树的叶子个数。D≤20。 输入最多包含1000组数据。
+
+输入4，2 输出12 输入3 4 输出7
+
+
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-13.png)
+
+
+
+```c++
+struct Node{
+bool have_value; //是否被赋值过
+int v; //结点值
+Node* left, * right;
+Node() :have_value(false), left(NULL), right(NULL) {} //构造函数
+};
+const int maxd = 20;
+int s[1 << maxd];//最大结点个数
+maxd-1
+int main()
+{
+	int depth, m;
+	cin >> depth >> m;
+	int num = (1<< depth) - 1;//最大结点的编号num.第一个结点编号为1
+	memset(s, 0, sizeof(s));
+	
+	for (int i = 0; i < m; i++)//连续让I个小球下落
+	{
+		int k = 1;//注意这句话的位置 每次小球下落都令k初始化为1
+		for(; ; )
+		{
+			s[k] = !s[k];
+			if (s[k] == 1)//根据开关状态选择下落方向
+				k = 2 * k;
+			else
+				k = 2 * k + 1;
+			
+			if (k > num)
+				break;
+			
+		}
+		if(i==m-1)
+		cout << k / 2<<" ";//出界之前结点编号
+	}
+	//方法2
+
+		if (m % 2) { m = (m + 1) / 2; k = 2 * k ; }
+		else { m = m / 2; k = 2 * k + 1; }
+	cout << k/2;
+
+}
+```
+
+## 9.给一棵点带权的二叉树找一个叶子使得它到根的路径上的权和最小。
+
+给一棵点带权（权值各不相同，都是小于10000的正整数）的二叉树的中序和后序遍 历，找一个叶子使得它到根的路径上的权和最小。如果有多解，该叶子本身的权应尽量小。 输入中每两行表示一棵树，其中第一行为中序遍历，第二行为后序遍历。
+
+```c++
+const int maxv = 10000 + 10;
+int in_order[maxv], post_order[maxv], lch[maxv], rch[maxv];//数组 全局变量
+int n;
+bool gettree(int* a)
+{
+	string linee;
+	if (!getline(cin, linee)) return false;
+	stringstream ss(linee);
+	int num;
+	n = 0;
+	while (ss >> num) { a[n] = num;n++; }
+	return n > 0;
+}
+//3 2 1 4 5 7 6
+//3 1 2 5 6 7 4 样例输出：1 
+
+//把in_order[L1..R1]和post_order[L2..R2]建成一棵二叉树，返回树根
+//因为各个结点的权值各不相同且都是正整数，直接用权值作为结点编号
+int build(int L1, int R1, int L2, int R2)
+{
+	if (L1 > R1)return 0;//空树
+	int root = post_order[R2];//后序遍历最后一个是根结点
+	int p = L1;
+	while(in_order[p] != root) p++;
+	int cns = p - L1; //左子树结点个数
+	lch[root] = build(L1, p - 1, L2, L2 + cns - 1);
+	rch[root] = build(p+1, R1, L2 + cns, R2 - 1);
+	return root;
+}
+int best = 0, bestnum = INT_MAX;//目前为止的最优解和对应的权和
+void dfs(int u,int sum)
+{	
+	sum += u;
+	if(!lch[u] && !rch[u]) //到达叶子
+	{
+		if (sum < bestnum || (sum == bestnum && u < best))
+		{
+			best = u;
+				bestnum = sum;
+		}
+		return;
+	}
+	if (lch[u])  dfs(lch[u],sum);
+	if (rch[u])  dfs(rch[u],sum);
+}
+int main()
+{
+	int sum = 0;
+	if (gettree(in_order) && gettree(post_order))
+	{
+		int root = build(0, n - 1, 0, n - 1);
+		dfs(root, sum);
+		cout << best;
+	}
+;
+}
+```
+
+## 10.天平问题
+
+
+
+输入一个树状天平，根据力矩相等原则判断是否平衡。如图6-5所示，所谓力矩相等， 就是WlDl=WrDr，其中Wl和Wr分别为左右两边砝码的重量，D为距离。 采用递归（先序）方式输入：每个天平的格式为Wl，Dl，Wr，Dr，当Wl或Wr为0时，表 示该“砝码”实际是一个子天平，接下来会描述这个子天平。当Wl=Wr=0时，会先描述左子天 平，然后是右子天平。
+
+![](C:\Users\14172\OneDrive\图片\屏幕快照\2020-11-15.png)
+
+//样例输入：
+//1
+//0 2 0 4
+//0 3 0 1
+//1 1 1 1
+//2 4 4 2
+//1 6 3 2   yes
+
+```c++
+//输入一个子天平，返回子天平是否平衡，参数W修改为子天平的总重量
+bool ifequ(int& w)
+{
+	int w1,r1,w2,r2;
+	cin >> w1 >> r1 >> w2 >> r2;
+	bool f1 = true, f2 = true;
+
+	if (!w1) f1 = ifequ(w1);
+	if (!w2) f2 = ifequ(w2);//注意W1 W2在调用函数时数值也发生了改变
+	w = w1 + w2;//引用作为参数故可以直接改变 这也是非常关键的地方
+	return f1 && f2 && (w1 * r1 == w2 * r2);
+		
+}
+
+int main()
+{
+	int T, n;
+	cin >> T;
+	while (T--)
+	{
+		if (ifequ(n)) cout << "yes";
+		else cout << "no\n";
+		if (T) cout << "\n";
+	}
+}
+```
+
+## 11.从左向右输出每个水平位置的所有结点的权值之和
+
+```c++
+const int maxd = 20;
+int sum[maxd];//全局变量 maxd是位置 sum[i]是这一位置的权值之和
+//给一棵二叉树，每个结点都有一个水平位置：左子结点在它左边1个单位，右子结点在右
+//边1个单位。从左向右输出每个水平位置的所有结点的权值之和。如图6 - 7所示，从左到右的3个
+//位置的权和分别为7，11，3。按照递归（先序）方式输入，用 - 1表示空树
+void build(int p)//输入并统计一棵子树，树根水平位置为p
+{
+	int v; cin >> v;
+	if (v == -1)return;
+	sum[p] += v;
+	build(p - 1);//注意这里的顺序很关键 先序遍历 要先左子树 如果先build(p+1)结果会错误
+	build(p + 1);
+}
+bool init()//边读入边统计
+{
+	int i; cin >> i;
+	if (i == -1) return false;
+	memset(sum, 0, sizeof(sum));
+	int pos = maxd / 2;//树根的水平位置
+	sum[pos] = i;
+	build(pos - 1);
+	build(pos + 1);
+}
+int main()
+{
+	int casee=0;
+	while (init())
+	{
+		int p = 0;
+		while (sum[p] == 0)p++;//找最左边的叶子
+		
+			cout << ++casee<<":"<<sum[p++] << " ";
+		
+		while (sum[p] != 0) { cout << sum[p++] << " "; }
+		cout << endl;
+	}
+
+}
+```
+
+
+
+# 队列
+
+## 1.用一个队列实现一个栈
+
+```c++
+class Stack
+{
+	queue<int>qu;
+public:
+	void ppush(int e)
+	{
+		qu.push(e);
+	}
+	int ppop()
+	{
+		int e, n = qu.size();
+		for (int i = 1; i <= n; i++)
+		{
+			
+				e = qu.front();
+				qu.pop();
+				if(i != n)
+				qu.push(e);//除了最后一个元素其他元素入队
+			
+		}
+		return e;
+	}
+	int getpop()//获取栈顶元素但不出栈
+	{
+		int e;
+		e = ppop();
+		ppush(e);
+		return e;
+	}
+	bool emppty()
+	{
+		return qu.empty();
+	}
+	}
+```
+
+## 2.通过队列改变一个栈的排列顺序
+
+```++
+//通过一个队列把一个栈st 从栈顶到栈底为a2n,a2n-1,...,a1 变为从栈顶到栈底a1,a3,a5...,a2,a4,...a2n
+void reassign(stack<int>&st)
+{int e;
+	queue<int>qu;
+	int i, m = st.size();
+	for (i = 1; i <= m; i++)
+	{
+		qu.push(st.top());
+		st.pop();
+	}
+	for (i = 1; i <= m; i++)
+	{
+		if (i % 2 == 1)//如果i是奇数 则为a2n a2n-2 推入栈， 否则进入队列中
+		{
+			st.push(qu.front());
+			qu.pop();
+		}
+		else
+		{
+			qu.push(qu.front());
+			qu.pop();
+		}
+	}
+	while(!qu.empty())
+	{
+		st.push(qu.front());
+		qu.pop();
+	}
+}
+```
+
+## 3.//通过一个队列实现约瑟夫问题
+
+```c++
+//通过一个队列实现约瑟夫问题
+void reassign(int n,int m)
+{
+	int i, p;
+	queue<int>qu;
+	for (i = 1; i <= n; i++)
+	{
+		qu.push(i);
+
+	}
+	i = 1;
+	while (!qu.empty())
+	{
+		if (i % m == 0)//如果数到了m就将这个人出队 输出数据 重新从1开始数
+		{
+			cout << qu.front()<<" ";
+			qu.pop();
+			i = 1;
+			
+		}
+		else
+		{
+			i++;
+			qu.push(qu.front());//否则将下一个人弹出并再次入队 将进入队尾
+			qu.pop();
+		}
+
+	}
+}
+```
+
+c++
+
+
+
+
+
+
+
+```c++
+using namespace std;
+int grid[8][8] =
+{
+	{1,1,1,1,1,1,1,1},
+	{0,0,0,0,0,1,1,1},
+	{1,0,1,1,0,1,1,1},
+	{1,0,1,1,0,1,1,1},
+	{1,0,1,1,1,1,1,1},
+	{1,0,1,1,1,1,1,1},
+	{1,0,0,0,0,0,0,1},
+	{1,1,1,1,1,1,0,0},
+};//0可以走 1不可以走
+typedef struct
+{
+	int i;
+	int j;
+	int pre;//pre是前驱方块在队列中的位置 从1~N-1
+}box;//box是一个方块
+int v[4] = {0,1,0,-1 };//水平偏移量
+int h[4] = {-1,0,1,0 };//垂直偏移量
+
+bool findpath(int xi, int yi, int xe, int ye)
+{//查找从x1 yi到xe ye的路径
+	box e;
+	box qu[100];//自己设置非循环顺序队
+	int front = -1, rear = -1;//设置队头与队尾指针
+	int i, j, j1, j2, k,pre,d;
+	 e.i = xi; e.j = yi;//入口方块进队
+	e.pre = -1;
+	rear++;
+	qu[rear] = e;
+	grid[xi][yi] = -1;//防止重复扫描
+
+	while (rear != front)//队不空时循环
+	{
+		front++; e = qu[front];
+		i = e.i; j = e.j; pre = e.pre;
+		if (i == xe && j == ye)//此时到达终点
+		{
+			d = -1;
+			
+			box path[100];
+			 k = front;
+			while (true)//反向搜索路径 存放在path中
+			{
+				d++;
+				path[d].i = qu[k].i;
+				path[d].j = qu[k].j;
+				if (qu[k].pre == -1) break;
+				k = qu[k].pre;
+				
+
+			}
+			for (k = d; k >= 0; k--)
+			{
+				if ((k - d) % 6 == 0) cout << endl;
+				cout <<"(" <<path[k].i << ","<<path[k].j<<")";
+			}
+			cout << endl;
+			return true;
+		}
+		else
+		{
+			for(i = 0;i < 4;i++)			
+					if (grid[xi + v[i]][yi + h[i]] == 0 && (xi + v[i])>=0&& (xi + v[i]) < 8 && (yi + h[i])>=0&& (yi + h[i]) < 8)
+					{//找到一个可走的相邻方块 即未被扫过可走 且不超过最大下标
+						
+						e.i = xi + v[i];
+						e.j = yi + h[i];
+						e.pre = front;
+						rear++;
+						qu[rear] = e;//将这个新方块进队
+						grid[xi + v[i]][yi + h[i]] = -1;//做上标记避免来回搜索
+					}
+		}
+
+
+	} 
+	return false;
+
+}
+int main()
+{
+	findpath(1, 0, 7, 7);
+	
+}
+
+```
+
